@@ -4,89 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Личный кабинет - Federal League</title>
+    <link rel="stylesheet" href="global.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root {
-            --background-color: #0f1215;
-            --white-color: #f0f0f0;
-            --black-color: #121212;
-            --main-color: #ffa939;
-            --description-color: #d2d0d0;
-            --red-color: #ff4c4c;
-            --green-color: #4caf50;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        body {
-            background-color: var(--background-color);
-            color: var(--white-color);
-            line-height: 1.6;
-        }
-
-        .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 5%;
-            background-color: rgba(18, 21, 25, 0.95);
-            border-bottom: 1px solid rgba(255, 169, 57, 0.3);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .menu-mobile {
-            display: flex;
-            align-items: center;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            text-decoration: none;
-        }
-
-        .logo-img {
-            width: 40px;
-            height: 40px;
-            margin-right: 10px;
-            border-radius: 50%;
-        }
-
-        .server-name {
-            color: var(--white-color);
-            font-weight: 700;
-        }
-
-        .hamburger {
-            display: none;
-            cursor: pointer;
-            margin-left: 20px;
-            font-size: 1.5rem;
-        }
-
-        .links {
-            display: flex;
-        }
-
-        .link {
-            color: var(--description-color);
-            text-decoration: none;
-            margin: 0 15px;
-            font-weight: 500;
-            transition: color 0.3s ease;
-        }
-
-        .link:hover, .link.active {
-            color: var(--main-color);
-        }
-
         .account-container {
             min-height: 100vh;
             background: linear-gradient(135deg, var(--background-color) 0%, #1a1d21 100%);
@@ -100,7 +20,6 @@
             border-radius: 15px;
             padding: 30px;
             border: 1px solid rgba(255, 169, 57, 0.2);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
         }
 
         .account-header {
@@ -111,12 +30,6 @@
         .account-header h1 {
             color: var(--white-color);
             margin-bottom: 10px;
-            font-size: 2.5rem;
-        }
-
-        .account-header p {
-            color: var(--description-color);
-            font-size: 1.1rem;
         }
 
         .account-stats {
@@ -132,24 +45,17 @@
             border-radius: 10px;
             text-align: center;
             border: 1px solid rgba(255, 169, 57, 0.2);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(255, 169, 57, 0.1);
         }
 
         .stat-card i {
-            font-size: 32px;
+            font-size: 24px;
             color: var(--main-color);
-            margin-bottom: 15px;
+            margin-bottom: 10px;
         }
 
         .stat-card h3 {
             color: var(--white-color);
-            margin-bottom: 10px;
-            font-size: 1.1rem;
+            margin-bottom: 5px;
         }
 
         .stat-card p {
@@ -159,7 +65,7 @@
         }
 
         .account-balance {
-            background: linear-gradient(135deg, var(--main-color) 0%, #ff8c00 100%);
+            background: var(--main-color);
             color: var(--black-color);
         }
 
@@ -185,45 +91,29 @@
             cursor: pointer;
             transition: all 0.3s ease;
             text-align: center;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100px;
         }
 
         .action-btn:hover {
             background: var(--main-color);
             color: var(--black-color);
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(255, 169, 57, 0.3);
-        }
-
-        .action-btn i {
-            font-size: 24px;
-            margin-bottom: 10px;
         }
 
         .user-info {
             background: rgba(210, 208, 208, 0.05);
-            padding: 25px;
+            padding: 20px;
             border-radius: 10px;
-            margin-bottom: 25px;
-            border: 1px solid rgba(255, 169, 57, 0.1);
+            margin-bottom: 20px;
         }
 
         .user-info h3 {
             color: var(--white-color);
-            margin-bottom: 20px;
-            font-size: 1.4rem;
-            border-bottom: 1px solid rgba(255, 169, 57, 0.2);
-            padding-bottom: 10px;
+            margin-bottom: 15px;
         }
 
         .info-item {
             display: flex;
             justify-content: space-between;
-            padding: 12px 0;
+            padding: 10px 0;
             border-bottom: 1px solid rgba(210, 208, 208, 0.1);
         }
 
@@ -250,16 +140,10 @@
             cursor: pointer;
             font-weight: 600;
             transition: all 0.3s ease;
-            font-size: 1.1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
         }
 
         .logout-btn:hover {
             background: rgba(255, 124, 124, 0.8);
-            transform: translateY(-2px);
         }
 
         .notification {
@@ -274,7 +158,6 @@
             transform: translateX(100%);
             transition: all 0.3s ease;
             max-width: 300px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
         
         .notification.show {
@@ -287,44 +170,7 @@
             border-left: 4px solid darkgreen;
         }
 
-        .notification.error {
-            background: var(--red-color);
-            border-left: 4px solid darkred;
-        }
-
         @media screen and (max-width: 768px) {
-            .navbar {
-                flex-direction: column;
-                padding: 10px;
-            }
-            
-            .menu-mobile {
-                width: 100%;
-                justify-content: space-between;
-            }
-            
-            .hamburger {
-                display: block;
-            }
-            
-            .links {
-                display: none;
-                flex-direction: column;
-                width: 100%;
-                margin-top: 15px;
-            }
-            
-            .links.active {
-                display: flex;
-            }
-            
-            .link {
-                margin: 8px 0;
-                padding: 10px;
-                border-radius: 5px;
-                background: rgba(255, 255, 255, 0.05);
-            }
-            
             .account-stats,
             .account-actions {
                 grid-template-columns: 1fr;
@@ -332,10 +178,6 @@
             
             .account-content {
                 padding: 20px;
-            }
-            
-            .account-header h1 {
-                font-size: 2rem;
             }
         }
     </style>
@@ -346,7 +188,7 @@
         <div class="menu-mobile">
             <a href="index.html">
                 <div class="logo">
-                    <img src="https://via.placeholder.com/40" alt="Server logo" class="logo-img">
+                    <div class="logo-img" style="background: linear-gradient(135deg, var(--main-color) 0%, #ff8c00 100%); color: var(--black-color); font-weight: bold; display: flex; align-items: center; justify-content: center;">FL</div>
                     <h3 class="server-name">Federal League</h3>
                 </div>
             </a>
@@ -395,21 +237,17 @@
             </div>
 
             <div class="account-actions">
-                <div class="action-btn" onclick="showNotification('Функция пополнения баланса в разработке', 'error')">
-                    <i class="fas fa-wallet"></i> 
-                    <span>Пополнить баланс</span>
+                <div class="action-btn" onclick="showNotification('Функция в разработке')">
+                    <i class="fas fa-wallet"></i> Пополнить баланс
                 </div>
-                <div class="action-btn" onclick="showNotification('Функция активации промокода в разработке', 'error')">
-                    <i class="fas fa-gift"></i> 
-                    <span>Активировать промокод</span>
+                <div class="action-btn" onclick="showNotification('Функция в разработке')">
+                    <i class="fas fa-gift"></i> Активировать промокод
                 </div>
-                <div class="action-btn" onclick="showNotification('История операций временно недоступна', 'error')">
-                    <i class="fas fa-history"></i> 
-                    <span>История операций</span>
+                <div class="action-btn" onclick="showNotification('Функция в разработке')">
+                    <i class="fas fa-history"></i> История операций
                 </div>
-                <div class="action-btn" onclick="showNotification('Настройки аккаунта скоро будут доступны', 'error')">
-                    <i class="fas fa-cog"></i> 
-                    <span>Настройки</span>
+                <div class="action-btn" onclick="showNotification('Функция в разработке')">
+                    <i class="fas fa-cog"></i> Настройки
                 </div>
             </div>
 
@@ -426,6 +264,10 @@
                 <div class="info-item">
                     <span class="info-label">Последний вход:</span>
                     <span class="info-value" id="last-login">01.09.2023</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">IP-адрес:</span>
+                    <span class="info-value" id="ip-address">192.168.1.1</span>
                 </div>
                 <div class="info-item">
                     <span class="info-label">Статус аккаунта:</span>
@@ -459,29 +301,42 @@
         // Функция выхода из аккаунта
         function logout() {
             if(confirm('Вы уверены, что хотите выйти из аккаунта?')) {
+                localStorage.removeItem('currentUser');
                 showNotification('Вы успешно вышли из аккаунта');
-                // Здесь обычно будет перенаправление на страницу выхода
                 setTimeout(() => {
-                    window.location.href = 'index.html';
+                    window.location.href = 'login.html';
                 }, 1000);
             }
         }
         
-        // Загрузка данных пользователя (заглушка)
+        // Загрузка данных пользователя
         document.addEventListener('DOMContentLoaded', function() {
-            // В реальном приложении здесь был бы запрос к API
-            document.getElementById('username').textContent = 'Алексей';
-            document.getElementById('balance').textContent = '1500 ₽';
-            document.getElementById('playtime').textContent = '127 ч';
-            document.getElementById('level').textContent = '24';
-            document.getElementById('player-nickname').textContent = 'AlexThePro';
-            document.getElementById('registration-date').textContent = '15.03.2023';
-            document.getElementById('last-login').textContent = '05.09.2023';
+            const userData = localStorage.getItem('currentUser');
             
-            // Мобильное меню
-            document.querySelector('.hamburger').addEventListener('click', function() {
-                document.querySelector('.links').classList.toggle('active');
-            });
+            if (!userData) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            try {
+                const user = JSON.parse(userData);
+                
+                // Заполняем данные пользователя
+                document.getElementById('username').textContent = user.username;
+                document.getElementById('player-nickname').textContent = user.username;
+                document.getElementById('registration-date').textContent = user.registrationDate ? new Date(user.registrationDate).toLocaleDateString('ru-RU') : 'Не указана';
+                document.getElementById('ip-address').textContent = user.ip || 'Неизвестен';
+                document.getElementById('last-login').textContent = user.lastLogin ? new Date(user.lastLogin).toLocaleDateString('ru-RU') : 'Сейчас';
+                
+                // Демо-данные
+                document.getElementById('balance').textContent = '1500 ₽';
+                document.getElementById('playtime').textContent = '127 ч';
+                document.getElementById('level').textContent = '24';
+                
+            } catch (e) {
+                console.error('Ошибка загрузки данных пользователя:', e);
+                window.location.href = 'login.html';
+            }
         });
     </script>
 </body>
