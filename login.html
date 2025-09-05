@@ -68,6 +68,13 @@
                         Забыли пароль?
                     </a>
                 </div>
+
+                <!-- Демо-данные для тестирования -->
+                <div style="margin-top: 20px; padding: 15px; background: rgba(255,169,57,0.1); border-radius: 8px; border-left: 4px solid var(--main-color);">
+                    <h4 style="color: var(--main-color); margin-bottom: 10px;">Демо-доступ:</h4>
+                    <p style="font-size: 12px; color: var(--description-color); margin-bottom: 5px;">Логин: <strong>demo</strong></p>
+                    <p style="font-size: 12px; color: var(--description-color);">Пароль: <strong>password</strong></p>
+                </div>
             </div>
         </div>
     </div>
@@ -108,171 +115,115 @@
         }
     }
 
-	// Обработка формы входа
-document.getElementById('login-form').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    
-    const login = document.getElementById('login-username').value;
-    const password = document.getElementById('login-password').value;
-    const remember = document.getElementById('remember-me').checked;
-    
-    if (!login || !password) {
-        showNotification('Заполните все поля', 'error');
-        return;
-    }
-    
-    const loginBtn = document.getElementById('login-btn');
-    const originalText = loginBtn.innerHTML;
-    
-    loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Вход...';
-    loginBtn.disabled = true;
-    
-    try {
-        // Получаем IP-адрес
-        const ip = await getIPAddress();
+    // Обработка формы входа
+    document.getElementById('login-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
         
-        // Пробуем разные форматы отправки данных
-        let response;
+        const login = document.getElementById('login-username').value;
+        const password = document.getElementById('login-password').value;
+        const remember = document.getElementById('remember-me').checked;
         
-        // Способ 1: FormData (традиционный)
+        if (!login || !password) {
+            showNotification('Заполните все поля', 'error');
+            return;
+        }
+        
+        const loginBtn = document.getElementById('login-btn');
+        const originalText = loginBtn.innerHTML;
+        
+        loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Вход...';
+        loginBtn.disabled = true;
+        
         try {
-            const formData = new FormData();
-            formData.append('action', 'login');
-            formData.append('username', login);
-            formData.append('password', password);
-            formData.append('ip', ip);
+            // ПЕРВОЕ: Пробуем аутентификацию через PHP сервер
+            try {
+                const ip = await getIPAddress();
+                const formData = new FormData();
+                formData.append('action', 'login');
+                formData.append('username', login);
+                formData.append('password', password);
+                formData.append('ip', ip);
+                
+                const response = await fetch('/api/auth.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    if (result.success) {
+                        showNotification('Вход выполнен успешно!', 'success');
+                        localStorage.setItem('currentUser', JSON.stringify(result.user));
+                        
+                        if (remember) {
+                            localStorage.setItem('remembered_user', login);
+                        }
+                        
+                        setTimeout(() => {
+                            window.location.href = 'account.html';
+                        }, 1000);
+                        return;
+                    }
+                }
+            } catch (phpError) {
+                console.log('PHP аутентификация недоступна, пробуем localStorage');
+            }
             
-            response = await fetch('/api/auth.php', {
-                method: 'POST',
-                body: formData
-            });
+            // ВТОРОЕ: Аутентификация через localStorage
+            const users = JSON.parse(localStorage.getItem('fl_users') || '[]');
+            
+            // Создаем демо-пользователя если его нет
+            const demoUser = {
+                id: 'demo123',
+                username: 'demo',
+                email: 'demo@example.com',
+                password: 'password',
+                registrationDate: new Date().toISOString()
+            };
+            
+            if (!users.find(u => u.username === 'demo')) {
+                users.push(demoUser);
+                localStorage.setItem('fl_users', JSON.stringify(users));
+            }
+            
+            // Ищем пользователя
+            const user = users.find(u => 
+                (u.username.toLowerCase() === login.toLowerCase() || 
+                 u.email.toLowerCase() === login.toLowerCase()) && 
+                u.password === password
+            );
+            
+            if (user) {
+                const ip = await getIPAddress();
+                user.lastLogin = new Date().toISOString();
+                user.ip = ip;
+                
+                // Обновляем данные пользователя
+                const updatedUsers = users.map(u => u.id === user.id ? user : u);
+                localStorage.setItem('fl_users', JSON.stringify(updatedUsers));
+                
+                showNotification('Вход выполнен успешно!', 'success');
+                localStorage.setItem('currentUser', JSON.stringify(user));
+                
+                if (remember) {
+                    localStorage.setItem('remembered_user', login);
+                }
+                
+                setTimeout(() => {
+                    window.location.href = 'account.html';
+                }, 1000);
+            } else {
+                showNotification('Неверное имя пользователя или пароль', 'error');
+            }
+            
         } catch (error) {
-            // Способ 2: URL encoded
-            const params = new URLSearchParams();
-            params.append('action', 'login');
-            params.append('username', login);
-            params.append('password', password);
-            params.append('ip', ip);
-            
-            response = await fetch('/api/auth.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: params
-            });
+            console.error('Ошибка входа:', error);
+            showNotification('Ошибка аутентификации', 'error');
+        } finally {
+            loginBtn.innerHTML = originalText;
+            loginBtn.disabled = false;
         }
-        
-        console.log('Response status:', response.status);
-        
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const result = await response.json();
-        
-        if (result.success) {
-            showNotification('Вход выполнен успешно!', 'success');
-            localStorage.setItem('currentUser', JSON.stringify(result.user));
-            
-            if (remember) {
-                localStorage.setItem('remembered_user', login);
-            }
-            
-            setTimeout(() => {
-                window.location.href = 'account.html';
-            }, 1000);
-        } else {
-            showNotification(result.message, 'error');
-        }
-    } catch (error) {
-        console.error('Ошибка входа:', error);
-        showNotification('Ошибка соединения: ' + error.message, 'error');
-        
-        // Fallback: используем localStorage аутентификацию
-        await fallbackAuthentication(login, password, remember);
-    } finally {
-        loginBtn.innerHTML = originalText;
-        loginBtn.disabled = false;
-    }
-});
-
-// Fallback аутентификация через localStorage
-async function fallbackAuthentication(login, password, remember) {
-    try {
-        const users = JSON.parse(localStorage.getItem('fl_users') || '[]');
-        
-        // Демо-пользователь
-        const demoUser = {
-            id: 'demo123',
-            username: 'demo',
-            email: 'demo@example.com',
-            password: 'password',
-            registrationDate: new Date().toISOString()
-        };
-        
-        // Добавляем демо-пользователя если его нет
-        if (!users.find(u => u.username === 'demo')) {
-            users.push(demoUser);
-            localStorage.setItem('fl_users', JSON.stringify(users));
-        }
-        
-        const user = users.find(u => 
-            (u.username === login || u.email === login) && 
-            u.password === password
-        );
-        
-        if (user) {
-            const ip = await getIPAddress();
-            user.lastLogin = new Date().toISOString();
-            user.ip = ip;
-            
-            showNotification('Вход выполнен (локальный режим)!', 'success');
-            localStorage.setItem('currentUser', JSON.stringify(user));
-            
-            if (remember) {
-                localStorage.setItem('remembered_user', login);
-            }
-            
-            setTimeout(() => {
-                window.location.href = 'account.html';
-            }, 1000);
-        } else {
-            showNotification('Неверные учетные данные', 'error');
-        }
-    } catch (error) {
-        showNotification('Ошибка локальной аутентификации', 'error');
-    }
-}
-
-// Функция для проверки доступности API
-async function checkApiAvailability() {
-    try {
-        const response = await fetch('api/auth.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ action: 'test' })
-        });
-        
-        if (response.ok) {
-            console.log('API доступен');
-            return true;
-        }
-    } catch (error) {
-        console.warn('API недоступен:', error);
-    }
-    return false;
-}
-
-// Проверка при загрузке страницы
-document.addEventListener('DOMContentLoaded', function() {
-    // ... существующий код ...
-    
-    // Проверяем доступность API
-    checkApiAvailability();
-});
+    });
 
     // Переключение видимости пароля
     document.getElementById('toggle-password').addEventListener('click', function() {
@@ -284,13 +235,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Проверка при загрузке страницы
     document.addEventListener('DOMContentLoaded', function() {
-        const currentUser = localStorage.getItem('currentUser');
-        if (currentUser) {
-            window.location.href = 'account.html';
-            return;
-        }
-        
-        // Автозаполнение логина, если пользователь выбрал "Запомнить меня"
+        // Только автозаполнение логина, НЕ автоматический вход
         const rememberedUser = localStorage.getItem('remembered_user');
         if (rememberedUser) {
             document.getElementById('login-username').value = rememberedUser;
@@ -302,6 +247,9 @@ document.addEventListener('DOMContentLoaded', function() {
         if (urlParams.get('registered') === 'true') {
             showNotification('Регистрация завершена. Теперь вы можете войти.', 'success');
         }
+        
+        // Для отладки
+        console.log('Текущий пользователь в localStorage:', localStorage.getItem('currentUser'));
     });
 
     // Обработка "Забыли пароль?"
