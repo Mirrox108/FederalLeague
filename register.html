@@ -241,6 +241,7 @@ async function getIPAddress() {
 }
 
 // Обработка формы регистрации
+	// Обработка формы регистрации
 document.getElementById('register-form').addEventListener('submit', async function(e) {
     e.preventDefault();
     
@@ -289,14 +290,26 @@ document.getElementById('register-form').addEventListener('submit', async functi
         // Получаем IP-адрес
         const ip = await getIPAddress();
         
-        // Отправляем данные на сервер
-        const response = await fetch('auth.php', {
+        // ОТПРАВЛЯЕМ ЗАПРОС НА ПРАВИЛЬНЫЙ ПУТЬ
+        const response = await fetch('api/auth.php', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
+                'Content-Type': 'application/json',
             },
-            body: `action=register&username=${encodeURIComponent(username)}&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}&newsletter=${newsletter ? '1' : '0'}&ip=${encodeURIComponent(ip)}`
+            body: JSON.stringify({
+                action: 'register',
+                username: username,
+                email: email,
+                password: password,
+                newsletter: newsletter ? '1' : '0',
+                ip: ip
+            })
         });
+        
+        // Проверяем статус ответа
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
         
         const result = await response.json();
         
@@ -312,11 +325,40 @@ document.getElementById('register-form').addEventListener('submit', async functi
         }
     } catch (error) {
         console.error('Registration error:', error);
-        showNotification('Ошибка соединения с сервером', 'error');
+        showNotification('Ошибка соединения с сервером: ' + error.message, 'error');
     } finally {
         registerBtn.innerHTML = originalText;
         registerBtn.disabled = false;
     }
+});
+
+// Функция для проверки доступности API
+async function checkApiAvailability() {
+    try {
+        const response = await fetch('api/auth.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ action: 'test' })
+        });
+        
+        if (response.ok) {
+            console.log('API доступен');
+            return true;
+        }
+    } catch (error) {
+        console.warn('API недоступен:', error);
+    }
+    return false;
+}
+
+// Проверка при загрузке страницы
+document.addEventListener('DOMContentLoaded', function() {
+    // ... существующий код ...
+    
+    // Проверяем доступность API
+    checkApiAvailability();
 });
 
 // Переключение видимости пароля

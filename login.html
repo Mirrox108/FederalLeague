@@ -108,7 +108,7 @@
         }
     }
 
-    // Обработка формы входа
+	// Обработка формы входа
 	document.getElementById('login-form').addEventListener('submit', async function(e) {
     e.preventDefault();
     
@@ -131,8 +131,8 @@
         // Получаем IP-адрес
         const ip = await getIPAddress();
         
-        // Отправляем данные на сервер
-        const response = await fetch('/api/auth.php', {
+        // ОТПРАВЛЯЕМ ЗАПРОС НА ПРАВИЛЬНЫЙ ПУТЬ
+        const response = await fetch('api/auth.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -144,6 +144,11 @@
                 ip: ip
             })
         });
+        
+        // Проверяем статус ответа
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
         
         const result = await response.json();
         
@@ -167,12 +172,41 @@
         }
     } catch (error) {
         console.error('Ошибка входа:', error);
-        showNotification('Ошибка соединения с сервером', 'error');
+        showNotification('Ошибка соединения с сервером: ' + error.message, 'error');
     } finally {
         loginBtn.innerHTML = originalText;
         loginBtn.disabled = false;
     }
-	});
+});
+
+// Функция для проверки доступности API
+async function checkApiAvailability() {
+    try {
+        const response = await fetch('api/auth.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ action: 'test' })
+        });
+        
+        if (response.ok) {
+            console.log('API доступен');
+            return true;
+        }
+    } catch (error) {
+        console.warn('API недоступен:', error);
+    }
+    return false;
+}
+
+// Проверка при загрузке страницы
+document.addEventListener('DOMContentLoaded', function() {
+    // ... существующий код ...
+    
+    // Проверяем доступность API
+    checkApiAvailability();
+});
 
     // Переключение видимости пароля
     document.getElementById('toggle-password').addEventListener('click', function() {
