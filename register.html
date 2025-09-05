@@ -6,9 +6,6 @@
     <title>Регистрация - Federal League</title>
     <link rel="stylesheet" href="global.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        /* ... (ваши существующие стили остаются без изменений) ... */
-    </style>
 </head>
 <body>
     <div class="register-container">
@@ -225,7 +222,8 @@ function validateEmail(email) {
 
 // Функция валидации имени пользователя
 function validateUsername(username) {
-    return username.length >= 3 && /^[a-zA-Z0-9_]+$/.test(username);
+    const usernameRegex = /^[a-zA-Z0-9_]{3,20}$/;
+    return usernameRegex.test(username);
 }
 
 // Функция для определения IP-адреса
@@ -240,8 +238,44 @@ async function getIPAddress() {
     }
 }
 
+// Функция проверки существующего пользователя
+function isUserExists(username, email) {
+    const users = JSON.parse(localStorage.getItem('fl_users') || '[]');
+    return users.some(user => 
+        user.username.toLowerCase() === username.toLowerCase() || 
+        user.email.toLowerCase() === email.toLowerCase()
+    );
+}
+
+// Функция создания нового пользователя
+async function createNewUser(username, email, password, newsletter) {
+    const ip = await getIPAddress();
+    
+    const newUser = {
+        id: Date.now() + Math.random().toString(36).substr(2, 9),
+        username: username,
+        email: email,
+        password: password,
+        ip: ip,
+        newsletter: newsletter === 'on',
+        registrationDate: new Date().toISOString(),
+        lastLogin: new Date().toISOString(),
+        balance: 100, // Стартовый баланс
+        level: 1,
+        playtime: '0 ч',
+        premium: false,
+        role: 'player'
+    };
+    
+    // Сохраняем пользователя
+    const users = JSON.parse(localStorage.getItem('fl_users') || '[]');
+    users.push(newUser);
+    localStorage.setItem('fl_users', JSON.stringify(users));
+    
+    return newUser;
+}
+
 // Обработка формы регистрации
-	// Обработка формы регистрации
 document.getElementById('register-form').addEventListener('submit', async function(e) {
     e.preventDefault();
     
@@ -255,7 +289,7 @@ document.getElementById('register-form').addEventListener('submit', async functi
     
     // Валидация
     if (!validateUsername(username)) {
-        showNotification('Имя пользователя должно содержать минимум 3 символа (только буквы, цифры и подчеркивания)', 'error');
+        showNotification('Имя пользователя должно содержать 3-20 символов (только буквы, цифры и подчеркивания)', 'error');
         return;
     }
     
@@ -280,6 +314,12 @@ document.getElementById('register-form').addEventListener('submit', async functi
         return;
     }
     
+    // Проверка существующего пользователя
+    if (isUserExists(username, email)) {
+        showNotification('Пользователь с таким именем или email уже существует', 'error');
+        return;
+    }
+    
     const registerBtn = document.getElementById('register-btn');
     const originalText = registerBtn.innerHTML;
     
@@ -287,78 +327,26 @@ document.getElementById('register-form').addEventListener('submit', async functi
     registerBtn.disabled = true;
     
     try {
-        // Получаем IP-адрес
-        const ip = await getIPAddress();
+        // Создаем нового пользователя
+        const newUser = await createNewUser(username, email, password, newsletter);
         
-        // ОТПРАВЛЯЕМ ЗАПРОС НА ПРАВИЛЬНЫЙ ПУТЬ
-        const response = await fetch('api/auth.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                action: 'register',
-                username: username,
-                email: email,
-                password: password,
-                newsletter: newsletter ? '1' : '0',
-                ip: ip
-            })
-        });
+        showNotification('Регистрация успешна! Добро пожаловать в Federal League!', 'success');
         
-        // Проверяем статус ответа
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
+        // Автоматически входим после регистрации
+        localStorage.setItem('currentUser', JSON.stringify(newUser));
         
-        const result = await response.json();
+        // Перенаправляем в личный кабинет через 2 секунды
+        setTimeout(() => {
+            window.location.href = 'account.html';
+        }, 2000);
         
-        if (result.success) {
-            showNotification('Регистрация успешна! Добро пожаловать!', 'success');
-            
-            // Перенаправляем на страницу входа через 2 секунды
-            setTimeout(() => {
-                window.location.href = 'login.html?registered=true';
-            }, 2000);
-        } else {
-            showNotification(result.message, 'error');
-        }
     } catch (error) {
         console.error('Registration error:', error);
-        showNotification('Ошибка соединения с сервером: ' + error.message, 'error');
+        showNotification('Ошибка при создании аккаунта', 'error');
     } finally {
         registerBtn.innerHTML = originalText;
         registerBtn.disabled = false;
     }
-});
-
-// Функция для проверки доступности API
-async function checkApiAvailability() {
-    try {
-        const response = await fetch('api/auth.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ action: 'test' })
-        });
-        
-        if (response.ok) {
-            console.log('API доступен');
-            return true;
-        }
-    } catch (error) {
-        console.warn('API недоступен:', error);
-    }
-    return false;
-}
-
-// Проверка при загрузке страницы
-document.addEventListener('DOMContentLoaded', function() {
-    // ... существующий код ...
-    
-    // Проверяем доступность API
-    checkApiAvailability();
 });
 
 // Переключение видимости пароля
@@ -376,17 +364,56 @@ document.getElementById('register-password').addEventListener('input', function(
     checkPasswordStrength(e.target.value);
 });
 
-// Проверка при загрузке страницы, если пользователь уже авторизован
+// Проверка при загрузке страницы
 document.addEventListener('DOMContentLoaded', function() {
+    // Инициализируем демо-аккаунты (если нужно)
+    const users = JSON.parse(localStorage.getItem('fl_users') || '[]');
+    
+    // Демо-аккаунты для тестирования
+    const demoAccounts = [
+        {
+            id: 'admin_001',
+            username: 'admin',
+            email: 'admin@federal-league.ru',
+            password: 'admin123',
+            role: 'administrator',
+            balance: 10000,
+            level: 50,
+            playtime: '350 ч',
+            premium: true,
+            registrationDate: new Date('2023-01-15').toISOString()
+        },
+        {
+            id: 'demo_001',
+            username: 'demo',
+            email: 'demo@federal-league.ru',
+            password: 'password',
+            role: 'player',
+            balance: 1500,
+            level: 24,
+            playtime: '127 ч',
+            premium: false,
+            registrationDate: new Date('2023-03-20').toISOString()
+        }
+    ];
+    
+    // Добавляем демо-аккаунты если их нет
+    let updated = false;
+    demoAccounts.forEach(demoAccount => {
+        if (!users.find(u => u.username === demoAccount.username)) {
+            users.push(demoAccount);
+            updated = true;
+        }
+    });
+    
+    if (updated) {
+        localStorage.setItem('fl_users', JSON.stringify(users));
+    }
+    
+    // Если пользователь уже авторизован, перенаправляем в кабинет
     const currentUser = localStorage.getItem('currentUser');
     if (currentUser) {
         window.location.href = 'account.html';
-    }
-    
-    // Показываем сообщение об успешной регистрации, если перешли с флагом
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('registered') === 'true') {
-        showNotification('Регистрация завершена успешно!', 'success');
     }
 });
 </script>
