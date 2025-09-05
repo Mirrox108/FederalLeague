@@ -1,0 +1,877 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <link rel="icon" href="images/logo.png">
+    <meta name="description" content="Магазин валюты и уникальных предметов Federal League">
+    <meta name="author" content="Federal League">
+
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/pages/home.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <title>FederalLeague | Магазин</title>
+    <style>
+        /* Shop Section */
+        #shop {
+            background: var(--background-color);
+            padding: 80px 0;
+        }
+
+        .shop-categories {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        .category-btn {
+            padding: 12px 24px;
+            border: 2px solid var(--main-color);
+            background: transparent;
+            color: var(--white-color);
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .category-btn.active,
+        .category-btn:hover {
+            background: var(--main-color);
+            color: var(--black-color);
+        }
+
+        .shop-items {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .shop-item {
+            background: rgba(36, 39, 43, 0.8);
+            border: 1px solid rgba(255, 169, 57, 0.3);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .shop-item:hover {
+            transform: translateY(-5px);
+            border-color: var(--main-color);
+            box-shadow: 0 10px 30px rgba(255, 169, 57, 0.2);
+        }
+
+        .item-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: var(--main-color);
+            color: var(--black-color);
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .item-icon {
+            font-size: 48px;
+            color: var(--main-color);
+            margin-bottom: 20px;
+        }
+
+        .item-title {
+            color: var(--white-color);
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        .item-description {
+            color: var(--description-color);
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .item-price {
+            margin-bottom: 20px;
+        }
+
+        .price-amount {
+            color: var(--main-color);
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .price-currency {
+            color: var(--description-color);
+            font-size: 16px;
+        }
+
+        .buy-btn {
+            width: 100%;
+            padding: 15px;
+            background: var(--main-color);
+            color: var(--black-color);
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .buy-btn:hover {
+            background: rgba(255, 169, 57, 0.9);
+            transform: translateY(-2px);
+        }
+
+        /* How to Buy Section */
+        #how-to-buy {
+            background: rgba(36, 39, 43, 0.5);
+            padding: 80px 0;
+        }
+
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+
+        .step {
+            text-align: center;
+            padding: 30px;
+            background: rgba(36, 39, 43, 0.8);
+            border-radius: 15px;
+            position: relative;
+        }
+
+        .step-number {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 30px;
+            background: var(--main-color);
+            color: var(--black-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        .step-icon {
+            font-size: 40px;
+            color: var(--main-color);
+            margin-bottom: 20px;
+        }
+
+        .step h3 {
+            color: var(--white-color);
+            margin-bottom: 10px;
+        }
+
+        .step p {
+            color: var(--description-color);
+        }
+
+        /* Support Section */
+        #support {
+            padding: 80px 0;
+        }
+
+        .support-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+
+        .support-option {
+            text-align: center;
+            padding: 40px 30px;
+            background: rgba(36, 39, 43, 0.8);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 169, 57, 0.3);
+        }
+
+        .support-icon {
+            font-size: 48px;
+            color: var(--main-color);
+            margin-bottom: 20px;
+        }
+
+        .support-option h3 {
+            color: var(--white-color);
+            margin-bottom: 10px;
+        }
+
+        .support-option p {
+            color: var(--description-color);
+            margin-bottom: 20px;
+        }
+
+        .support-link {
+            color: var(--main-color);
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .support-link:hover {
+            color: var(--white-color);
+        }
+
+        /* Purchase Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+
+        .modal-content {
+            background: var(--background-color);
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            border: 2px solid var(--main-color);
+        }
+
+        .modal-close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .modal-close:hover {
+            color: var(--white-color);
+        }
+
+        .modal-header {
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            color: var(--white-color);
+        }
+
+        .modal-body {
+            margin-bottom: 30px;
+        }
+
+        .item-info {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .price-info, .balance-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding: 10px;
+            background: rgba(210, 208, 208, 0.1);
+            border-radius: 8px;
+        }
+
+        .modal-footer {
+            display: flex;
+            gap: 15px;
+        }
+
+        .cancel-btn, .confirm-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .cancel-btn {
+            background: var(--description-color);
+            color: var(--black-color);
+        }
+
+        .confirm-btn {
+            background: var(--main-color);
+            color: var(--black-color);
+        }
+
+        .cancel-btn:hover {
+            background: rgba(210, 208, 208, 0.3);
+        }
+
+        .confirm-btn:hover {
+            background: rgba(255, 169, 57, 0.9);
+        }
+
+        /* Responsive */
+        @media screen and (max-width: 768px) {
+            .shop-items {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            }
+            
+            .steps {
+                grid-template-columns: 1fr;
+            }
+            
+            .support-options {
+                grid-template-columns: 1fr;
+            }
+            
+            .modal-content {
+                margin: 10% auto;
+                width: 95%;
+            }
+            
+            .modal-footer {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!--Navbar-->
+    <div class="navbar">
+        <div class="menu-mobile">
+            <a href="index.html">
+                <div class="logo">
+                    <img src="images/logo.png" alt="Server logo" class="logo-img">
+                    <h3 class="server-name">Federal League</h3>
+                </div>
+            </a>
+
+            <div class="hamburger">
+                <i class="fa-solid fa-bars"></i>
+            </div>
+        </div>
+
+        <div class="links">
+            <a href="index.html" class="link">Главная</a>
+            <a href="#" class="link active">Магазин</a>
+            <a href="rules.html" class="link">Правила</a>
+            <a href="admin-team.html" class="link">Команда</a>
+            <a href="contact.html" class="link">Поддержка</a>
+            <a href="account.html" class="link">Личный кабинет</a>
+        </div>
+    </div>
+
+    <!--Header-->
+    <section id="header">
+        <div class="content">
+
+            <div class="left">
+                <div class="server-name">
+                    <p>МАГАЗИН FEDERAL LEAGUE</p>
+                    <h1 class="minecraft-server-ip">Уникальные предметы и валюта</h1>
+                </div>
+                <p class="server-description">
+                    Приобретайте эксклюзивные предметы, внутриигровую валюту и усиливайте свой опыт игры на сервере.
+                    <br><br>Все покупки помогают развитию проекта!
+                </p>
+                <div class="buttons">
+                    <button class="copy-ip">Перейти на сервер</button>
+                    <a href="#shop"><button class="how-to-join">Смотреть товары</button></a>
+                </div>
+                <p class="ip-copied">IP скопирован!</p>
+            </div>
+
+            <div class="right">
+                <img src="images/logo.png" alt="Server logo" class="logo-img logo-img-header">
+
+                <div class="stats">
+                    <div class="stat">
+                        <div class="icon">
+                            <i class="fas fa-coins"></i>
+                        </div>
+                        <div class="texts">
+                            <h5 class="stat-title">Валюта в обращении</h5>
+                            <p><span class="stat-number">1.5M</span> FL coins</p>
+                        </div>
+                    </div>
+                    <div class="stat">
+                        <div class="icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="texts">
+                            <h5 class="stat-title">Покупателей</h5>
+                            <p><span class="stat-number">2.4K</span> игроков</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!--Shop-->
+    <section id="shop">
+        <div class="content">
+            <h2 class="section-title">Магазин <span>предметов</span></h2>
+            <p class="section-description">Приобретайте эксклюзивные предметы за внутриигровую валюту</p>
+            
+            <div class="shop-categories">
+                <button class="category-btn active" data-category="all">Все товары</button>
+                <button class="category-btn" data-category="currency">Валюта</button>
+                <button class="category-btn" data-category="cosmetics">Косметика</button>
+                <button class="category-btn" data-category="boosters">Бустеры</button>
+                <button class="category-btn" data-category="unique">Уникальное</button>
+            </div>
+
+            <div class="shop-items">
+                <!-- Валюта -->
+                <div class="shop-item" data-category="currency">
+                    <div class="item-badge">Популярно</div>
+                    <div class="item-icon">
+                        <i class="fas fa-coins"></i>
+                    </div>
+                    <h3 class="item-title">100 FL Coins</h3>
+                    <p class="item-description">Базовая валюта для старта</p>
+                    <div class="item-price">
+                        <span class="price-amount">100</span>
+                        <span class="price-currency">FL Coins</span>
+                    </div>
+                    <button class="buy-btn">Купить сейчас</button>
+                </div>
+
+                <div class="shop-item" data-category="currency">
+                    <div class="item-badge">Выгодно</div>
+                    <div class="item-icon">
+                        <i class="fas fa-piggy-bank"></i>
+                    </div>
+                    <h3 class="item-title">500 FL Coins</h3>
+                    <p class="item-description">Большой запас валюты</p>
+                    <div class="item-price">
+                        <span class="price-amount">450</span>
+                        <span class="price-currency">FL Coins</span>
+                    </div>
+                    <button class="buy-btn">Купить сейчас</button>
+                </div>
+
+                <div class="shop-item" data-category="currency">
+                    <div class="item-badge">Элитный</div>
+                    <div class="item-icon">
+                        <i class="fas fa-crown"></i>
+                    </div>
+                    <h3 class="item-title">1000 FL Coins</h3>
+                    <p class="item-description">Максимальный пакет</p>
+                    <div class="item-price">
+                        <span class="price-amount">800</span>
+                        <span class="price-currency">FL Coins</span>
+                    </div>
+                    <button class="buy-btn">Купить сейчас</button>
+                </div>
+
+                <!-- Косметика -->
+                <div class="shop-item" data-category="cosmetics">
+                    <div class="item-icon">
+                        <i class="fas fa-hat-wizard"></i>
+                    </div>
+                    <h3 class="item-title">Магическая шляпа</h3>
+                    <p class="item-description">Эксклюзивный головной убор</p>
+                    <div class="item-price">
+                        <span class="price-amount">150</span>
+                        <span class="price-currency">FL Coins</span>
+                    </div>
+                    <button class="buy-btn">Купить сейчас</button>
+                </div>
+
+                <div class="shop-item" data-category="cosmetics">
+                    <div class="item-icon">
+                        <i class="fas fa-gem"></i>
+                    </div>
+                    <h3 class="item-title">Сияющий плащ</h3>
+                    <p class="item-description">Плащ с частицами</p>
+                    <div class="item-price">
+                        <span class="price-amount">200</span>
+                        <span class="price-currency">FL Coins</span>
+                    </div>
+                    <button class="buy-btn">Купить сейчас</button>
+                </div>
+
+                <!-- Бустеры -->
+                <div class="shop-item" data-category="boosters">
+                    <div class="item-badge">Хит</div>
+                    <div class="item-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h3 class="item-title">Бустер опыта 2x</h3>
+                    <p class="item-description">На 24 часа</p>
+                    <div class="item-price">
+                        <span class="price-amount">300</span>
+                        <span class="price-currency">FL Coins</span>
+                    </div>
+                    <button class="buy-btn">Купить сейчас</button>
+                </div>
+
+                <div class="shop-item" data-category="boosters">
+                    <div class="item-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3 class="item-title">Защита города</h3>
+                    <p class="item-description">7 дней защиты</p>
+                    <div class="item-price">
+                        <span class="price-amount">500</span>
+                        <span class="price-currency">FL Coins</span>
+                    </div>
+                    <button class="buy-btn">Купить сейчас</button>
+                </div>
+
+                <!-- Уникальное -->
+                <div class="shop-item" data-category="unique">
+                    <div class="item-badge">Легендарный</div>
+                    <div class="item-icon">
+                        <i class="fas fa-dragon"></i>
+                    </div>
+                    <h3 class="item-title">Драконье яйцо</h3>
+                    <p class="item-description">Уникальный декоративный блок</p>
+                    <div class="item-price">
+                        <span class="price-amount">1000</span>
+                        <span class="price-currency">FL Coins</span>
+                    </div>
+                    <button class="buy-btn">Купить сейчас</button>
+                </div>
+
+                <div class="shop-item" data-category="unique">
+                    <div class="item-icon">
+                        <i class="fas fa-landmark"></i>
+                    </div>
+                    <h3 class="item-title">Президентский дворец</h3>
+                    <p class="item-description">Эксклюзивная постройка</p>
+                    <div class="item-price">
+                        <span class="price-amount">2000</span>
+                        <span class="price-currency">FL Coins</span>
+                    </div>
+                    <button class="buy-btn">Купить сейчас</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!--How to buy-->
+    <section id="how-to-buy">
+        <div class="content">
+            <h2 class="section-title">Как <span>приобрести</span></h2>
+            <p class="section-description">Простой процесс покупки предметов</p>
+
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-icon">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <h3>Авторизуйтесь</h3>
+                    <p>Войдите в свой аккаунт на сайте</p>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-icon">
+                        <i class="fas fa-coins"></i>
+                    </div>
+                    <h3>Выберите товар</h3>
+                    <p>Добавьте нужные предметы в корзину</p>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <h3>Подтвердите</h3>
+                    <p>Завершите покупку</p>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-icon">
+                        <i class="fas fa-gift"></i>
+                    </div>
+                    <h3>Получите</h3>
+                    <p>Предметы появятся в игре</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!--FAQ-->
+    <section id="faq">
+        <div class="content">
+            <div class="info">
+                <h2 class="section-title">Частые <span>Вопросы</span></h2>
+                <p class="section-description">Всё о покупках и предметах</p>
+            </div>
+
+            <div class="accordion faqList">
+                <div class="accordion-item">
+                    <div class="accordion-item-header">
+                        Как получить FL Coins?
+                    </div>
+                    <div class="accordion-item-body">
+                        <div class="accordion-item-body-content">
+                            FL Coins можно получить за активность на сервере, участие в событиях, продажу ресурсов или покупку в магазине.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <div class="accordion-item-header">
+                        Как быстро приходят предметы?
+                    </div>
+                    <div class="accordion-item-body">
+                        <div class="accordion-item-body-content">
+                            Предметы доставляются мгновенно после подтверждения покупки. Перезайдите на сервер если не увидели их сразу.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <div class="accordion-item-header">
+                        Можно ли вернуть предметы?
+                    </div>
+                    <div class="accordion-item-body">
+                        <div class="accordion-item-body-content">
+                            Возврат возможен в течение 24 часов после покупки, если предмет не был использован.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <div class="accordion-item-header">
+                        Есть ли скидки?
+                    </div>
+                    <div class="accordion-item-body">
+                        <div class="accordion-item-body-content">
+                            Да, мы регулярно проводим акции и предлагаем скидки постоянным покупателям.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <div class="accordion-item-header">
+                        Можно ли передать предмет другому игроку?
+                    </div>
+                    <div class="accordion-item-body">
+                        <div class="accordion-item-body-content">
+                            Большинство предметов привязаны к аккаунту. Некоторые косметические предметы можно передавать.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <div class="accordion-item-header">
+                        Что если я не получил предмет?
+                    </div>
+                    <div class="accordion-item-body">
+                        <div class="accordion-item-body-content">
+                            Свяжитесь с поддержкой через Discord или сайт, предоставив данные о покупке.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!--Support-->
+    <section id="support">
+        <div class="content">
+            <h2 class="section-title">Нужна <span>помощь?</span></h2>
+            <p class="section-description">Наша поддержка всегда готова помочь с покупками</p>
+            
+            <div class="support-options">
+                <div class="support-option">
+                    <div class="support-icon">
+                        <i class="fab fa-discord"></i>
+                    </div>
+                    <h3>Discord</h3>
+                    <p>Быстрая помощь в Discord</p>
+                    <a href="#" class="support-link">Перейти в Discord</a>
+                </div>
+
+                <div class="support-option">
+                    <div class="support-icon">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <h3>Email</h3>
+                    <p>support@federalleague.ru</p>
+                    <a href="mailto:support@federalleague.ru" class="support-link">Написать</a>
+                </div>
+
+                <div class="support-option">
+                    <div class="support-icon">
+                        <i class="fas fa-book"></i>
+                    </div>
+                    <h3>База знаний</h3>
+                    <p>Ответы на частые вопросы</p>
+                    <a href="#" class="support-link">Читать</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!--Footer-->
+    <footer id="footer">
+        <p class="copyright">&copy; 2025 <span class="server-name-footer">Federal League</span>. Все права защищены.</p>
+        <div class="social-links">
+            <a href="#" class="link tiktok-link"><i class="fa-brands fa-tiktok"></i></a>
+            <a href="#" class=" link instagram-link"><i class="fa-brands fa-telegram"></i></a>
+            <a href="#" class="link discord-link-footer"><i class="fa-brands fa-discord"></i></a>
+        </div>
+    </footer>
+
+    <!-- Модальное окно покупки -->
+    <div id="purchase-modal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close">&times;</span>
+            <div class="modal-header">
+                <h2 class="modal-title">Подтверждение покупки</h2>
+            </div>
+            <div class="modal-body">
+                <div class="item-info">
+                    <div class="item-icon">
+                        <i class="fas fa-coins"></i>
+                    </div>
+                    <h3 class="item-title">100 FL Coins</h3>
+                    <p class="item-description">Базовая валюта для старта</p>
+                </div>
+                <div class="price-info">
+                    <span class="price-label">Стоимость:</span>
+                    <span class="price-amount">100 FL Coins</span>
+                </div>
+                <div class="balance-info">
+                    <span class="balance-label">Ваш баланс:</span>
+                    <span class="balance-amount">500 FL Coins</span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="cancel-btn">Отмена</button>
+                <button class="confirm-btn">Подтвердить покупку</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Shop functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            // Category filtering
+            const categoryBtns = document.querySelectorAll('.category-btn');
+            const shopItems = document.querySelectorAll('.shop-item');
+            
+            categoryBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const category = this.dataset.category;
+                    
+                    // Update active button
+                    categoryBtns.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Filter items
+                    shopItems.forEach(item => {
+                        if (category === 'all' || item.dataset.category === category) {
+                            item.style.display = 'block';
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    });
+                });
+            });
+            
+            // Purchase modal
+            const buyBtns = document.querySelectorAll('.buy-btn');
+            const modal = document.getElementById('purchase-modal');
+            const closeModal = document.querySelector('.modal-close');
+            const cancelBtn = document.querySelector('.cancel-btn');
+            
+            buyBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const item = this.closest('.shop-item');
+                    const title = item.querySelector('.item-title').textContent;
+                    const description = item.querySelector('.item-description').textContent;
+                    const price = item.querySelector('.price-amount').textContent;
+                    const icon = item.querySelector('.item-icon').innerHTML;
+                    
+                    // Update modal content
+                    document.querySelector('.modal .item-icon').innerHTML = icon;
+                    document.querySelector('.modal .item-title').textContent = title;
+                    document.querySelector('.modal .item-description').textContent = description;
+                    document.querySelector('.modal .price-amount').textContent = price + ' FL Coins';
+                    
+                    // Show modal
+                    modal.style.display = 'block';
+                });
+            });
+            
+            // Close modal
+            function closeModalFunc() {
+                modal.style.display = 'none';
+            }
+            
+            closeModal.addEventListener('click', closeModalFunc);
+            cancelBtn.addEventListener('click', closeModalFunc);
+            
+            // Close modal when clicking outside
+            window.addEventListener('click', function(event) {
+                if (event.target === modal) {
+                    closeModalFunc();
+                }
+            });
+            
+            // Confirm purchase
+            const confirmBtn = document.querySelector('.confirm-btn');
+            confirmBtn.addEventListener('click', function() {
+                alert('Покупка успешно завершена! Предметы будут доставлены в ближайшее время.');
+                closeModalFunc();
+            });
+            
+            // Copy IP button
+            const copyIpBtn = document.querySelector('.copy-ip');
+            const ipCopied = document.querySelector('.ip-copied');
+            
+            copyIpBtn.addEventListener('click', function() {
+                navigator.clipboard.writeText('mc.federalleague.ru').then(() => {
+                    ipCopied.style.display = 'block';
+                    setTimeout(() => {
+                        ipCopied.style.display = 'none';
+                    }, 2000);
+                });
+            });
+            
+            // Accordion FAQ
+            const accordionItems = document.querySelectorAll('.accordion-item');
+            
+            accordionItems.forEach(item => {
+                const header = item.querySelector('.accordion-item-header');
+                
+                header.addEventListener('click', function() {
+                    const isActive = item.classList.contains('active');
+                    
+                    // Close all items
+                    accordionItems.forEach(i => i.classList.remove('active'));
+                    
+                    // Open clicked item if it was closed
+                    if (!isActive) {
+                        item.classList.add('active');
+                    }
+                });
+            });
+        });
+    </script>
+    <script src="https://kit.fontawesome.com/cbf5ee59c8.js" crossorigin="anonymous"></script>
+</body>
+</html>

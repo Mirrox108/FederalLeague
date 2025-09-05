@@ -1,0 +1,661 @@
+/* Shop Section */
+#shop {
+    background: var(--background-color);
+    padding: 80px 0;
+}
+
+.shop-categories {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+}
+
+.category-btn {
+    padding: 12px 24px;
+    border: 2px solid var(--main-color);
+    background: transparent;
+    color: var(--white-color);
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 600;
+}
+
+.category-btn.active,
+.category-btn:hover {
+    background: var(--main-color);
+    color: var(--black-color);
+}
+
+.shop-items {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+    margin-top: 40px;
+}
+
+.shop-item {
+    background: rgba(36, 39, 43, 0.8);
+    border: 1px solid rgba(255, 169, 57, 0.3);
+    border-radius: 15px;
+    padding: 30px;
+    text-align: center;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.shop-item:hover {
+    transform: translateY(-5px);
+    border-color: var(--main-color);
+    box-shadow: 0 10px 30px rgba(255, 169, 57, 0.2);
+}
+
+.item-badge {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: var(--main-color);
+    color: var(--black-color);
+    padding: 5px 12px;
+    border-radius: 15px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.item-icon {
+    font-size: 48px;
+    color: var(--main-color);
+    margin-bottom: 20px;
+}
+
+.item-title {
+    color: var(--white-color);
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.item-description {
+    color: var(--description-color);
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+
+.item-price {
+    margin-bottom: 20px;
+}
+
+.price-amount {
+    color: var(--main-color);
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.price-currency {
+    color: var(--description-color);
+    font-size: 16px;
+}
+
+.buy-btn {
+    width: 100%;
+    padding: 15px;
+    background: var(--main-color);
+    color: var(--black-color);
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.buy-btn:hover {
+    background: rgba(255, 169, 57, 0.9);
+    transform: translateY(-2px);
+}
+
+/* How to Buy Section */
+#how-to-buy {
+    background: rgba(36, 39, 43, 0.5);
+    padding: 80px 0;
+}
+
+.steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+    margin-top: 50px;
+}
+
+.step {
+    text-align: center;
+    padding: 30px;
+    background: rgba(36, 39, 43, 0.8);
+    border-radius: 15px;
+    position: relative;
+}
+
+.step-number {
+    position: absolute;
+    top: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 30px;
+    height: 30px;
+    background: var(--main-color);
+    color: var(--black-color);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+}
+
+.step-icon {
+    font-size: 40px;
+    color: var(--main-color);
+    margin-bottom: 20px;
+}
+
+.step h3 {
+    color: var(--white-color);
+    margin-bottom: 10px;
+}
+
+.step p {
+    color: var(--description-color);
+}
+
+/* Support Section */
+#support {
+    padding: 80px 0;
+}
+
+.support-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+    margin-top: 50px;
+}
+
+.support-option {
+    text-align: center;
+    padding: 40px 30px;
+    background: rgba(36, 39, 43, 0.8);
+    border-radius: 15px;
+    border: 1px solid rgba(255, 169, 57, 0.3);
+}
+
+.support-icon {
+    font-size: 48px;
+    color: var(--main-color);
+    margin-bottom: 20px;
+}
+
+.support-option h3 {
+    color: var(--white-color);
+    margin-bottom: 10px;
+}
+
+.support-option p {
+    color: var(--description-color);
+    margin-bottom: 20px;
+}
+
+.support-link {
+    color: var(--main-color);
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.support-link:hover {
+    color: var(--white-color);
+}
+
+/* Purchase Modal */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+.modal-content {
+    background: var(--background-color);
+    margin: 5% auto;
+    padding: 30px;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 500px;
+    border: 2px solid var(--main-color);
+}
+
+.modal-close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.modal-close:hover {
+    color: var(--white-color);
+}
+
+.modal-header {
+    margin-bottom: 20px;
+}
+
+.modal-title {
+    color: var(--white-color);
+}
+
+.modal-body {
+    margin-bottom: 30px;
+}
+
+.item-info {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.price-info, .balance-info {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    padding: 10px;
+    background: rgba(210, 208, 208, 0.1);
+    border-radius: 8px;
+}
+
+.modal-footer {
+    display: flex;
+    gap: 15px;
+}
+
+.cancel-btn, .confirm-btn {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.cancel-btn {
+    background: var(--description-color);
+    color: var(--black-color);
+}
+
+.confirm-btn {
+    background: var(--main-color);
+    color: var(--black-color);
+}
+
+.cancel-btn:hover {
+    background: rgba(210, 208, 208, 0.3);
+}
+
+.confirm-btn:hover {
+    background: rgba(255, 169, 57, 0.9);
+}
+
+/* Responsive */
+@media screen and (max-width: 768px) {
+    .shop-items {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    }
+    
+    .steps {
+        grid-template-columns: 1fr;
+    }
+    
+    .support-options {
+        grid-template-columns: 1fr;
+    }
+    
+    .modal-content {
+        margin: 10% auto;
+        width: 95%;
+    }
+    
+    .modal-footer {
+        flex-direction: column;
+    }
+}
+
+/* Shop Section */
+#shop {
+    background: var(--background-color);
+    padding: 80px 0;
+}
+
+.shop-categories {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+}
+
+.category-btn {
+    padding: 12px 24px;
+    border: 2px solid var(--main-color);
+    background: transparent;
+    color: var(--white-color);
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 600;
+}
+
+.category-btn.active,
+.category-btn:hover {
+    background: var(--main-color);
+    color: var(--black-color);
+}
+
+.shop-items {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+    margin-top: 40px;
+}
+
+.shop-item {
+    background: rgba(36, 39, 43, 0.8);
+    border: 1px solid rgba(255, 169, 57, 0.3);
+    border-radius: 15px;
+    padding: 30px;
+    text-align: center;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.shop-item:hover {
+    transform: translateY(-5px);
+    border-color: var(--main-color);
+    box-shadow: 0 10px 30px rgba(255, 169, 57, 0.2);
+}
+
+.item-badge {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: var(--main-color);
+    color: var(--black-color);
+    padding: 5px 12px;
+    border-radius: 15px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.item-icon {
+    font-size: 48px;
+    color: var(--main-color);
+    margin-bottom: 20px;
+}
+
+.item-title {
+    color: var(--white-color);
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.item-description {
+    color: var(--description-color);
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+
+.item-price {
+    margin-bottom: 20px;
+}
+
+.price-amount {
+    color: var(--main-color);
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.price-currency {
+    color: var(--description-color);
+    font-size: 16px;
+}
+
+.buy-btn {
+    width: 100%;
+    padding: 15px;
+    background: var(--main-color);
+    color: var(--black-color);
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.buy-btn:hover {
+    background: rgba(255, 169, 57, 0.9);
+    transform: translateY(-2px);
+}
+
+/* How to Buy Section */
+#how-to-buy {
+    background: rgba(36, 39, 43, 0.5);
+    padding: 80px 0;
+}
+
+.steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+    margin-top: 50px;
+}
+
+.step {
+    text-align: center;
+    padding: 30px;
+    background: rgba(36, 39, 43, 0.8);
+    border-radius: 15px;
+    position: relative;
+}
+
+.step-number {
+    position: absolute;
+    top: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 30px;
+    height: 30px;
+    background: var(--main-color);
+    color: var(--black-color);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+}
+
+.step-icon {
+    font-size: 40px;
+    color: var(--main-color);
+    margin-bottom: 20px;
+}
+
+.step h3 {
+    color: var(--white-color);
+    margin-bottom: 10px;
+}
+
+.step p {
+    color: var(--description-color);
+}
+
+/* Support Section */
+#support {
+    padding: 80px 0;
+}
+
+.support-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+    margin-top: 50px;
+}
+
+.support-option {
+    text-align: center;
+    padding: 40px 30px;
+    background: rgba(36, 39, 43, 0.8);
+    border-radius: 15px;
+    border: 1px solid rgba(255, 169, 57, 0.3);
+}
+
+.support-icon {
+    font-size: 48px;
+    color: var(--main-color);
+    margin-bottom: 20px;
+}
+
+.support-option h3 {
+    color: var(--white-color);
+    margin-bottom: 10px;
+}
+
+.support-option p {
+    color: var(--description-color);
+    margin-bottom: 20px;
+}
+
+.support-link {
+    color: var(--main-color);
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.support-link:hover {
+    color: var(--white-color);
+}
+
+/* Purchase Modal */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+.modal-content {
+    background: var(--background-color);
+    margin: 5% auto;
+    padding: 30px;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 500px;
+    border: 2px solid var(--main-color);
+}
+
+.modal-close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.modal-close:hover {
+    color: var(--white-color);
+}
+
+.modal-header {
+    margin-bottom: 20px;
+}
+
+.modal-title {
+    color: var(--white-color);
+}
+
+.modal-body {
+    margin-bottom: 30px;
+}
+
+.item-info {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.price-info, .balance-info {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    padding: 10px;
+    background: rgba(210, 208, 208, 0.1);
+    border-radius: 8px;
+}
+
+.modal-footer {
+    display: flex;
+    gap: 15px;
+}
+
+.cancel-btn, .confirm-btn {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.cancel-btn {
+    background: var(--description-color);
+    color: var(--black-color);
+}
+
+.confirm-btn {
+    background: var(--main-color);
+    color: var(--black-color);
+}
+
+.cancel-btn:hover {
+    background: rgba(210, 208, 208, 0.3);
+}
+
+.confirm-btn:hover {
+    background: rgba(255, 169, 57, 0.9);
+}
+
+/* Responsive */
+@media screen and (max-width: 768px) {
+    .shop-items {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    }
+    
+    .steps {
+        grid-template-columns: 1fr;
+    }
+    
+    .support-options {
+        grid-template-columns: 1fr;
+    }
+    
+    .modal-content {
+        margin: 10% auto;
+        width: 95%;
+    }
+    
+    .modal-footer {
+        flex-direction: column;
+    }
+}

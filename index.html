@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <link rel="icon" href="images/logo.png">
+    <meta name="description" content="Free, modern and nice web template for Minecraft server.">
+    <meta name="author" content="Astronawta">
+
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/pages/home.css">
+
+    <title>FederalLeague | Главная</title>
+</head>
+<body>
+    <!--Navbar-->
+    <div class="navbar">
+        <div class="menu-mobile">
+            <a href="index.html">
+                <div class="logo">
+                    <img src="images/logo.png" alt="Server logo" class="logo-img">
+                    <h3 class="server-name">Federal League</h3>
+                </div>
+            </a>
+
+            <div class="hamburger">
+                <i class="fa-solid fa-bars"></i>
+            </div>
+        </div>
+
+        <div class="links">
+            <a href="#" class="link active">Главная</a>
+            <a href="rules.html" class="link">Правила</a>
+            <a href="admin-team.html" class="link">Команда</a>
+            <a href="contact.html" class="link">Связь</a>
+			<a href="account.html" class="link">Личный кабинет</a>
+        </div>
+    </div>
+
+    <!--Header-->
+    <section id="header">
+        <div class="content">
+
+            <div class="left">
+                <div class="server-name">
+                    <p>ПОЛИТИЧЕСКИЙ MINECRAFT СЕРВЕР</p>
+                    <h1 class="minecraft-server-ip">mc.federalleague.ru</h1>
+                </div>
+                <p class="server-description">
+                    Создайте своё государство, пишите законы, стройте города и определяйте их судьбу. Ваше решение изменит ход истории сервера.
+                    <br><br>Присоединяйся и играй со своими друзьями!
+                </p>
+                <div class="buttons">
+                    <button class="copy-ip">Скопировать IP</button>
+                    <a href="#about"><button class="how-to-join">Узнать болльше</button></a>
+                </div>
+                <p class="ip-copied">IP успешно скопирован!</p>
+            </div>
+
+            <div class="right">
+                <img src="images/logo.png" alt="Server logo" class="logo-img logo-img-header">
+
+                <div class="stats">
+                    <div class="stat">
+                        <div class="icon">
+                            <i class="fa-brands fa-discord"></i>
+                        </div>
+                        <div class="texts">
+                            <h5 class="stat-title">Discord server</h5>
+                            <p><span class="stat-number discord-online-users">None</span> users online</p>
+                        </div>
+                    </div>
+                    <div class="stat">
+                        <div class="icon">
+                            <i class="fa-solid fa-server"></i>
+                        </div>
+                        <div class="texts">
+                            <h5 class="stat-title">Minecraft server</h5>
+                            <p><span class="stat-number minecraft-online-players">None</span> players online</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!--About us-->
+    <section id="about">
+        <div class="content">
+            <div class="left">
+                <h2 class="section-title">Кто мы?</h2>
+                <p class="about-us">Добро пожаловать в Federal League! Здесь великие империи не рождаются — их создают. На этом сервере нет места случайным игрокам. Здесь правят стратеги, заговорщики и полководцы. Каждый чанк — ваша земля. Каждый закон — ваша воля. Каждая война — ваша история. Создайте державу, которая переживет века, или станьте тем, кто стянет их в прах. Основать город — это только начало. Ваша истинная цель — завоевать весь мир. Готовы ли вы к власти? </p>
+            </div>
+
+            <div class="right">
+                <img src="images/about-section-person-image.png" alt="Minecraft person">
+                <div class="img-background"></div>
+            </div>
+        </div>
+    </section>
+
+    <!--News-->
+    <section id="news">
+        <div class="content">
+            <h2 class="section-title">Последние <span>новости</span></h2>
+            <p class="section-description">Следите за обновлениями и событиями на нашем сервере</p>
+            
+            <div class="news-container" id="news-container">
+                <div class="news-loading">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>Загрузка новостей...</p>
+                </div>
+            </div>
+            
+            <div class="news-actions">
+                <a href="#news" class="view-all-news" onclick="loadAllNews()">Смотреть все новости</a>
+            </div>
+        </div>
+    </section>
+
+    <!--Mini games-->
+    <section id="minigames">
+        <div class="content miniGames-list">
+            <div class="game">
+                <img src="images/survival-minigames-image.jpg" alt="Survival image">
+
+                <div class="info">
+                    <h2 class="section-title">Система войн</h2>
+                    <div class="game-description">
+                        <p>Участвуйте в эпических сражениях между государствами. Захватывайте территории, формируйте альянсы и доминируйте на политической карте сервера.</p>
+                        <ul class="services">
+                            <li class="service">Система осад</li>
+                            <li class="service">Военные союзы</li>
+                            <li class="service">Захват территорий</li>
+                            <li class="service">Дипломатия</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="game">
+                <img src="images/survival-minigames-image.jpg" alt="Survival image">
+
+                <div class="info">
+                    <h2 class="section-title">Политическая система</h2>
+                    <div class="game-description">
+                        <p>Создавайте законы, формируйте правительство, участвуйте в выборах и управляйте своим государством с помощью сложной политической системы.</p>
+                        <ul class="services">
+                            <li class="service">Законодательство</li>
+                            <li class="service">Выборы</li>
+                            <li class="service">Налоговая система</li>
+                            <li class="service">Государственные должности</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!--Discord-->
+    <section id="discord">
+        <div class="content">
+            <h2 class="section-title">Появились <span>проблемы?</span> Поддержка всегда рядом <br> Присоединяйся к нам в <span>Discord!</span></h2>
+            <a href="#" class="discord-link"><button class="join-discord">Присоединится в Discord</button></a>
+        </div>
+    </section>
+
+    <!--FAQs-->
+    <section id="faq">
+        <div class="content">
+            <div class="info">
+                <h2 class="section-title">Частые <span>Вопросы.</span></h2>
+                <p class="section-description">Здесь мы ответили на самые часто задаваемые вопросы!</p>
+            </div>
+
+            <div class="accordion faqList">
+                <div class="accordion-item">
+                    <div class="accordion-item-header">
+                        Проходка платная?
+                    </div>
+                    <div class="accordion-item-body">
+                        <div class="accordion-item-body-content">
+                            Нет. Проходка как и весь наш сервер абсолютно бесплатны. На сервере присутствует своя экономика
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <div class="accordion-item-header">
+                        Нужна лицензия?
+                    </div>
+                    <div class="accordion-item-body">
+                        <div class="accordion-item-body-content">
+                            Нет. Вы можете присоединится к серверу как с лицензии так и пиратки
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <div class="accordion-item-header">
+                        Могу ли я играть здесь со своими друзьями?
+                    </div>
+                    <div class="accordion-item-body">
+                        <div class="accordion-item-body-content">
+                            Да конечно! Вы можете привести своих друзей на сервер и получить за них бонусы. Также здесь вы можете найти и новых друзей
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <div class="accordion-item-header">
+                        Как создать город или нацию?
+                    </div>
+                    <div class="accordion-item-body">
+                        <div class="accordion-item-body-content">
+                            Для создания города используйте команду /town create [название]. Для создания государства необходимо объединить несколько городов с помощью команды /nation create [название].
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <div class="accordion-item-header">
+                        Что делать если я потерял вещи?
+                    </div>
+                    <div class="accordion-item-body">
+                        <div class="accordion-item-body-content">
+                            Мы не восстанавливаем потерянные вещи, если это не связано с багом сервера. Рекомендуем использовать эндерсундуки для хранения ценных предметов и быть осторожным в опасных зонах.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <div class="accordion-item-header">
+                        Как сообщить о нарушителе?
+                    </div>
+                    <div class="accordion-item-body">
+                        <div class="accordion-item-body-content">
+                            Если вы столкнулись с нарушителем правил, сделайте скриншот или запишите видео нарушения, а затем обратитесь к модератору в Discord или через форму обращения. Укажите никнейм нарушителя, время нарушения и приложите доказательства.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!--Footer-->
+    <footer id="footer">
+        <p class="copyright">&copy; 2025 <span class="server-name-footer">Federal League</span>. Все права завоёванны.</p>
+        <div class="social-links">
+            <a href="#" class="link tiktok-link"><i class="fa-brands fa-tiktok"></i></a>
+            <a href="#" class="link instagram-link"><i class="fa-brands fa-telegram"></i></a>
+            <a href="#" class="link discord-link-footer"><i class="fa-brands fa-discord"></i></a>
+        </div>
+    </footer>
+
+    <!-- Модальное окно для новостей -->
+    <div id="news-modal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close">&times;</span>
+            <div class="modal-header">
+                <div class="modal-date">
+                    <span class="modal-day">15</span>
+                    <span class="modal-month">Янв</span>
+                </div>
+                <h2 class="modal-title">Заголовок новости</h2>
+            </div>
+            <div class="modal-body">
+                <div class="modal-image">
+                    <img src="" alt="">
+                </div>
+                <div class="modal-text"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-close-btn">Закрыть</button>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="js/script.js"></script>
+<script src="js/news-modal.js"></script>
+<script src="https://kit.fontawesome.com/cbf5ee59c8.js" crossorigin="anonymous"></script>
+</html>
