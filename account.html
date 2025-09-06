@@ -1,5 +1,33 @@
 <!doctype html>
 <html lang="en">
+
+<script>
+// Проверка валидности сессии при загрузке account.html
+document.addEventListener('DOMContentLoaded', function() {
+    function isValidUserSession(userData) {
+        if (!userData) return false;
+        if (!userData.id || !userData.username) return false;
+        
+        // Проверяем, не истекла ли сессия (7 дней)
+        const sessionDuration = 7 * 24 * 60 * 60 * 1000;
+        const now = new Date().getTime();
+        const lastLogin = new Date(userData.lastLogin).getTime();
+        
+        return (now - lastLogin) < sessionDuration;
+    }
+
+    const userData = JSON.parse(localStorage.getItem('currentUser') || 'null');
+    
+    if (!userData || !isValidUserSession(userData)) {
+        localStorage.removeItem('currentUser');
+        window.location.href = 'login.html';
+        return;
+    }
+    
+    // Если сессия валидна, продолжаем загрузку страницы
+});
+</script>
+    
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
