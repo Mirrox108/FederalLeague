@@ -189,4 +189,93 @@
         }
 
         // Функция для получения названия роли на русском
-        function getRoleName(
+        function getRoleName(role) {
+            const roles = {
+                'administrator': 'Администратор',
+                'moderator': 'Модератор',
+                'player': 'Игрок',
+                'vip': 'VIP Игрок',
+                'premium': 'Премиум'
+            };
+            return roles[role] || role;
+        }
+
+        // Функция для получения класса badge роли
+        function getRoleBadgeClass(role) {
+            const classes = {
+                'administrator': 'role-admin',
+                'moderator': 'role-moderator',
+                'player': 'role-player',
+                'vip': 'role-player',
+                'premium': 'role-player'
+            };
+            return classes[role] || 'role-player';
+        }
+        
+        // Загрузка данных пользователя
+        document.addEventListener('DOMContentLoaded', async function() {
+            const userData = localStorage.getItem('currentUser');
+            
+            if (!userData) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            try {
+                const user = JSON.parse(userData);
+                
+                // Если есть UID (пользователь из Firebase), обновляем данные
+                if (user.uid && !user.uid.startsWith('demo_')) {
+                    try {
+                        const userDoc = await getDoc(doc(db, "users", user.uid));
+                        if (userDoc.exists()) {
+                            const freshData = userDoc.data();
+                            // Обновляем данные
+                            user.balance = freshData.balance;
+                            user.level = freshData.level;
+                            user.playtime = freshData.playtime;
+                            user.premium = freshData.premium;
+                            user.role = freshData.role;
+                            
+                            localStorage.setItem('currentUser', JSON.stringify(user));
+                        }
+                    } catch (error) {
+                        console.log('Не удалось обновить данные из Firebase:', error);
+                    }
+                }
+                
+                // Заполняем данные пользователя
+                document.getElementById('username').textContent = user.username;
+                document.getElementById('player-nickname').textContent = user.username;
+                document.getElementById('user-email').textContent = user.email || 'Не указан';
+                document.getElementById('registration-date').textContent = user.registrationDate ? new Date(user.registrationDate).toLocaleDateString('ru-RU') : 'Не указана';
+                document.getElementById('last-login').textContent = user.lastLogin ? new Date(user.lastLogin).toLocaleDateString('ru-RU') : 'Сейчас';
+                document.getElementById('user-id').textContent = user.uid ? user.uid.substring(0, 8) + '...' : 'Демо-аккаунт';
+                
+                // Заполняем дополнительные данные
+                document.getElementById('balance').textContent = user.balance ? user.balance + ' ₽' : '0 ₽';
+                document.getElementById('playtime').textContent = user.playtime || '0 ч';
+                document.getElementById('level').textContent = user.level || '1';
+                document.getElementById('premium-status').textContent = user.premium ? 'Активен' : 'Неактивен';
+                document.getElementById('account-status').textContent = 'Активен';
+                
+                // Отображаем роль пользователя
+                const userRole = user.role || 'player';
+                document.getElementById('user-role').textContent = getRoleName(userRole);
+                
+                // Добавляем badge роли
+                const roleBadge = document.getElementById('role-badge');
+                roleBadge.textContent = getRoleName(userRole);
+                roleBadge.className = 'role-badge ' + getRoleBadgeClass(userRole);
+                
+            } catch (e) {
+                console.error('Ошибка загрузки данных пользователя:', e);
+                showNotification('Ошибка загрузки данных', 'error');
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 2000);
+            }
+        });
+    </script>
+</body>
+</html>
