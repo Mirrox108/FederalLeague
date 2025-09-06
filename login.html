@@ -208,9 +208,18 @@
             
             localStorage.setItem('currentUser', JSON.stringify(userSessionData));
             
+            // Устанавливаем persistence в зависимости от выбора "Запомнить меня"
+            const persistence = remember ? 
+                firebase.auth.Auth.Persistence.LOCAL : 
+                firebase.auth.Auth.Persistence.SESSION;
+            
+            await auth.setPersistence(persistence);
+            
             // Запоминаем пользователя, если выбрана опция
             if (remember) {
                 localStorage.setItem('remembered_user', login);
+            } else {
+                localStorage.removeItem('remembered_user');
             }
             
             showNotification('Вход выполнен успешно!', 'success');
@@ -234,6 +243,9 @@
                 case 'auth/invalid-email':
                     errorMessage = 'Неверный формат email';
                     break;
+                case 'auth/too-many-requests':
+                    errorMessage = 'Слишком много попыток входа. Попробуйте позже';
+                    break;
                 default:
                     errorMessage = error.message;
             }
@@ -255,6 +267,43 @@
 
     // Проверка при загрузке страницы
     document.addEventListener('DOMContentLoaded', function() {
+        // Проверяем состояние аутентификации Firebase
+        auth.onAuthStateChanged(async (user) => {
+            if (user) {
+                // Пользователь авторизован в Firebase
+                try {
+                    // Получаем данные пользователя из Firestore
+                    const userDoc = await db.collection('users').doc(user.uid).get();
+                    
+                    if (userDoc.exists) {
+                        const userData = userDoc.data();
+                        
+                        // Сохраняем данные пользователя в localStorage
+                        const userSessionData = {
+                            uid: user.uid,
+                            email: user.email,
+                            username: userData.username,
+                            displayName: userData.displayName || userData.username,
+                            role: userData.role || 'user'
+                        };
+                        
+                        localStorage.setItem('currentUser', JSON.stringify(userSessionData));
+                        
+                        // Перенаправляем в личный кабинет
+                        window.location.href = 'account.html';
+                    }
+                } catch (error) {
+                    console.error('Ошибка получения данных пользователя:', error);
+                    // В случае ошибки выходим из системы
+                    await auth.signOut();
+                    localStorage.removeItem('currentUser');
+                }
+            } else {
+                // Пользователь не авторизован в Firebase
+                localStorage.removeItem('currentUser');
+            }
+        });
+        
         // Автозаполнение логина, если пользователь выбрал "Запомнить меня"
         const rememberedUser = localStorage.getItem('remembered_user');
         if (rememberedUser) {
@@ -268,12 +317,9 @@
             showNotification('Регистрация завершена. Теперь вы можете войти.', 'success');
         }
         
-        // Убираем проверку авторизации при загрузке, чтобы избежать цикла перенаправлений
-        // Вместо этого проверяем, есть ли сохраненные данные пользователя
-        const currentUser = localStorage.getItem('currentUser');
-        if (currentUser) {
-            // Если пользователь уже авторизован, перенаправляем в кабинет
-            window.location.href = 'account.html';
+        // Показываем сообщение о выходе, если есть
+        if (urlParams.get('logout') === 'true') {
+            showNotification('Вы успешно вышли из системы', 'info');
         }
     });
 
@@ -323,7 +369,13 @@
             })
             .catch((error) => {
                 console.error('Ошибка отправки email:', error);
-                showNotification('Ошибка при отправке email для восстановления пароля', 'error');
+                
+                let errorMessage = 'Ошибка при отправке email для восстановления пароля';
+                if (error.code === 'auth/user-not-found') {
+                    errorMessage = 'Пользователь с таким email не найден';
+                }
+                
+                showNotification(errorMessage, 'error');
             });
     }
     </script>
