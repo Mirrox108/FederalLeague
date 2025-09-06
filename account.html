@@ -1,49 +1,242 @@
-<!doctype html>
-<html lang="en">
-
-<script>
-// Проверка валидности сессии при загрузке account.html
-document.addEventListener('DOMContentLoaded', function() {
-    function isValidUserSession(userData) {
-        if (!userData) return false;
-        if (!userData.id || !userData.username) return false;
-        
-        // Проверяем, не истекла ли сессия (7 дней)
-        const sessionDuration = 7 * 24 * 60 * 60 * 1000;
-        const now = new Date().getTime();
-        const lastLogin = new Date(userData.lastLogin).getTime();
-        
-        return (now - lastLogin) < sessionDuration;
-    }
-
-    const userData = JSON.parse(localStorage.getItem('currentUser') || 'null');
-    
-    if (!userData || !isValidUserSession(userData)) {
-        localStorage.removeItem('currentUser');
-        window.location.href = 'login.html';
-        return;
-    }
-    
-    // Если сессия валидна, продолжаем загрузку страницы
-});
-</script>
-    
+<!DOCTYPE html>
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Личный кабинет - Federal League</title>
+    <link rel="stylesheet" href="global.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Стили для личного кабинета */
+        .account-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
 
-    <link rel="icon" href="images/logo.png">
-    <meta name="description" content="Free, modern and nice web template for Minecraft server.">
-    <meta name="author" content="Astronawta">
+        .account-header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            color: white;
+            text-align: center;
+        }
 
-    <link rel="stylesheet" href="css/global.css">
-    <link rel="stylesheet" href="css/pages/account.css">
+        .user-profile {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
 
-    <title>FederalLeague | Личный кабинет</title>
+        .user-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 4px solid #4CAF50;
+            object-fit: cover;
+        }
+
+        .user-info h1 {
+            margin: 0;
+            font-size: 2.5em;
+            color: white;
+        }
+
+        .user-rank {
+            background: #4CAF50;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            margin-top: 5px;
+            display: inline-block;
+        }
+
+        .account-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .stat-icon {
+            font-size: 2em;
+            color: #4CAF50;
+            margin-bottom: 10px;
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #2c3e50;
+            margin: 10px 0;
+        }
+
+        .stat-label {
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+
+        .account-sections {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .section-card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .section-card h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 10px;
+        }
+
+        .action-buttons {
+            display: grid;
+            gap: 10px;
+        }
+
+        .btn-account {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #3498db;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .btn-warning {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background: #c0392b;
+            transform: translateY(-2px);
+        }
+
+        .recent-activity {
+            list-style: none;
+            padding: 0;
+        }
+
+        .activity-item {
+            padding: 15px;
+            border-left: 4px solid #4CAF50;
+            background: #f8f9fa;
+            margin-bottom: 10px;
+            border-radius: 4px;
+        }
+
+        .activity-time {
+            color: #7f8c8d;
+            font-size: 0.8em;
+            display: block;
+            margin-top: 5px;
+        }
+
+        .logout-section {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .user-profile {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .account-stats {
+                grid-template-columns: 1fr;
+            }
+            
+            .account-sections {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 8px;
+            color: white;
+            z-index: 1000;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .notification.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            background: #4CAF50;
+        }
+
+        .notification.error {
+            background: #e74c3c;
+        }
+
+        .notification.warning {
+            background: #f39c12;
+        }
+
+        .notification.info {
+            background: #3498db;
+        }
+    </style>
 </head>
 <body>
-    <!--Navbar-->
+    <!-- Navbar -->
     <div class="navbar">
         <div class="menu-mobile">
             <a href="index.html">
@@ -52,7 +245,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     <h3 class="server-name">Federal League</h3>
                 </div>
             </a>
-
             <div class="hamburger">
                 <i class="fa-solid fa-bars"></i>
             </div>
@@ -67,385 +259,167 @@ document.addEventListener('DOMContentLoaded', function() {
         </div>
     </div>
 
-    <!--Account Section-->
-    <section id="account">
-        <div class="content">
-            <div class="account-container">
-                <div class="account-sidebar">
-                    <div class="profile-summary">
-                        <div class="avatar">
-                            <img src="images/player-avatar.png" alt="Player Avatar">
-                            <span class="online-status"></span>
-                        </div>
-                        <h3 class="player-name">Игрок_123</h3>
-                        <p class="player-rank">Гражданин</p>
-                    </div>
-
-                    <nav class="account-menu">
-                        <a href="#profile" class="menu-item active" data-tab="profile">
-                            <i class="fas fa-user"></i>
-                            Профиль
-                        </a>
-                        <a href="#stats" class="menu-item" data-tab="stats">
-                            <i class="fas fa-chart-line"></i>
-                            Статистика
-                        </a>
-                        <a href="#nation" class="menu-item" data-tab="nation">
-                            <i class="fas fa-landmark"></i>
-                            Моя нация
-                        </a>
-                        <a href="#friends" class="menu-item" data-tab="friends">
-                            <i class="fas fa-users"></i>
-                            Друзья
-                        </a>
-                        <a href="#settings" class="menu-item" data-tab="settings">
-                            <i class="fas fa-cog"></i>
-                            Настройки
-                        </a>
-                        <a href="#" class="menu-item logout">
-                            <i class="fas fa-sign-out-alt"></i>
-                            Выйти
-                        </a>
-                    </nav>
-                </div>
-
-                <div class="account-content">
-                    <!-- Profile Tab -->
-                    <div class="tab-content active" id="profile-tab">
-                        <h2 class="tab-title">Профиль игрока</h2>
-                        
-                        <div class="profile-info">
-                            <div class="info-card">
-                                <h3>Основная информация</h3>
-                                <div class="info-grid">
-                                    <div class="info-item">
-                                        <span class="info-label">Никнейм:</span>
-                                        <span class="info-value">Игрок_123</span>
-                                    </div>
-                                    <div class="info-item">
-                                        <span class="info-label">Ранг:</span>
-                                        <span class="info-value rank-value">Гражданин</span>
-                                    </div>
-                                    <div class="info-item">
-                                        <span class="info-label">Баланс:</span>
-                                        <span class="info-value">1,250 FL coins</span>
-                                    </div>
-                                    <div class="info-item">
-                                        <span class="info-label">В игре с:</span>
-                                        <span class="info-value">15 января 2025</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="info-card">
-                                <h3>Государственная принадлежность</h3>
-                                <div class="info-grid">
-                                    <div class="info-item">
-                                        <span class="info-label">Нация:</span>
-                                        <span class="info-value">Великая Империя</span>
-                                    </div>
-                                    <div class="info-item">
-                                        <span class="info-label">Город:</span>
-                                        <span class="info-value">Столичный Град</span>
-                                    </div>
-                                    <div class="info-item">
-                                        <span class="info-label">Должность:</span>
-                                        <span class="info-value">Министр экономики</span>
-                                    </div>
-                                    <div class="info-item">
-                                        <span class="info-label">Репутация:</span>
-                                        <span class="info-value reputation-positive">+85</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="profile-actions">
-                            <button class="action-btn edit-profile">
-                                <i class="fas fa-edit"></i>
-                                Редактировать профиль
-                            </button>
-                            <button class="action-btn change-password">
-                                <i class="fas fa-key"></i>
-                                Сменить пароль
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Stats Tab -->
-                    <div class="tab-content" id="stats-tab">
-                        <h2 class="tab-title">Статистика игрока</h2>
-                        
-                        <div class="stats-grid">
-                            <div class="stat-card">
-                                <div class="stat-icon">
-                                    <i class="fas fa-fist-raised"></i>
-                                </div>
-                                <h3>Убийства</h3>
-                                <span class="stat-number">47</span>
-                            </div>
-                            
-                            <div class="stat-card">
-                                <div class="stat-icon">
-                                    <i class="fas fa-skull"></i>
-                                </div>
-                                <h3>Смерти</h3>
-                                <span class="stat-number">32</span>
-                            </div>
-                            
-                            <div class="stat-card">
-                                <div class="stat-icon">
-                                    <i class="fas fa-medal"></i>
-                                </div>
-                                <h3>Победы в войнах</h3>
-                                <span class="stat-number">5</span>
-                            </div>
-                            
-                            <div class="stat-card">
-                                <div class="stat-icon">
-                                    <i class="fas fa-clock"></i>
-                                </div>
-                                <h3>Время в игре</h3>
-                                <span class="stat-number">85ч</span>
-                            </div>
-                            
-                            <div class="stat-card">
-                                <div class="stat-icon">
-                                    <i class="fas fa-home"></i>
-                                </div>
-                                <h3>Построено зданий</h3>
-                                <span class="stat-number">28</span>
-                            </div>
-                            
-                            <div class="stat-card">
-                                <div class="stat-icon">
-                                    <i class="fas fa-handshake"></i>
-                                </div>
-                                <h3>Дипломатических сделок</h3>
-                                <span class="stat-number">12</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Nation Tab -->
-                    <div class="tab-content" id="nation-tab">
-                        <h2 class="tab-title">Моя нация</h2>
-                        
-                        <div class="nation-header">
-                            <div class="nation-flag">
-                                <img src="images/nation-flag.png" alt="Nation Flag">
-                            </div>
-                            <div class="nation-info">
-                                <h3>Великая Империя</h3>
-                                <p class="nation-description">Могущественная империя, стремящаяся к доминации на всем сервере. Мы строим, развиваемся и защищаем наши земли.</p>
-                                <div class="nation-stats">
-                                    <div class="nation-stat">
-                                        <span class="stat-label">Участников:</span>
-                                        <span class="stat-value">24</span>
-                                    </div>
-                                    <div class="nation-stat">
-                                        <span class="stat-label">Городов:</span>
-                                        <span class="stat-value">5</span>
-                                    </div>
-                                    <div class="nation-stat">
-                                        <span class="stat-label">Территория:</span>
-                                        <span class="stat-value">125 чанков</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="nation-management">
-                            <h3>Управление нацией</h3>
-                            <div class="management-actions">
-                                <button class="action-btn">
-                                    <i class="fas fa-users"></i>
-                                    Участники
-                                </button>
-                                <button class="action-btn">
-                                    <i class="fas fa-map-marked-alt"></i>
-                                    Территории
-                                </button>
-                                <button class="action-btn">
-                                    <i class="fas fa-coins"></i>
-                                    Казна
-                                </button>
-                                <button class="action-btn">
-                                    <i class="fas fa-scroll"></i>
-                                    Законы
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Friends Tab -->
-                    <div class="tab-content" id="friends-tab">
-                        <h2 class="tab-title">Друзья</h2>
-                        
-                        <div class="friends-search">
-                            <input type="text" placeholder="Найти друзей...">
-                            <button class="search-btn">
-                                <i class="fas fa-search"></i>
-                            </button>
-                        </div>
-
-                        <div class="friends-list">
-                            <div class="friend-item online">
-                                <div class="friend-avatar">
-                                    <img src="images/player-avatar2.png" alt="Friend Avatar">
-                                    <span class="status"></span>
-                                </div>
-                                <div class="friend-info">
-                                    <h4>Друг_1</h4>
-                                    <p>Великая Империя</p>
-                                </div>
-                                <div class="friend-actions">
-                                    <button class="action-btn">
-                                        <i class="fas fa-comment"></i>
-                                    </button>
-                                    <button class="action-btn">
-                                        <i class="fas fa-times"></i>
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div class="friend-item offline">
-                                <div class="friend-avatar">
-                                    <img src="images/player-avatar3.png" alt="Friend Avatar">
-                                    <span class="status"></span>
-                                </div>
-                                <div class="friend-info">
-                                    <h4>Друг_2</h4>
-                                    <p>Свободный город</p>
-                                </div>
-                                <div class="friend-actions">
-                                    <button class="action-btn">
-                                        <i class="fas fa-comment"></i>
-                                    </button>
-                                    <button class="action-btn">
-                                        <i class="fas fa-times"></i>
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div class="friend-item online">
-                                <div class="friend-avatar">
-                                    <img src="images/player-avatar4.png" alt="Friend Avatar">
-                                    <span class="status"></span>
-                                </div>
-                                <div class="friend-info">
-                                    <h4>Друг_3</h4>
-                                    <p>Северная Конфедерация</p>
-                                </div>
-                                <div class="friend-actions">
-                                    <button class="action-btn">
-                                        <i class="fas fa-comment"></i>
-                                    </button>
-                                    <button class="action-btn">
-                                        <i class="fas fa-times"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="friend-requests">
-                            <h3>Запросы в друзья</h3>
-                            <div class="request-item">
-                                <div class="request-info">
-                                    <img src="images/player-avatar5.png" alt="Player Avatar">
-                                    <div>
-                                        <h4>Игрок_456</h4>
-                                        <p>Хочет добавить вас в друзья</p>
-                                    </div>
-                                </div>
-                                <div class="request-actions">
-                                    <button class="accept-btn">
-                                        <i class="fas fa-check"></i>
-                                    </button>
-                                    <button class="decline-btn">
-                                        <i class="fas fa-times"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Settings Tab -->
-                    <div class="tab-content" id="settings-tab">
-                        <h2 class="tab-title">Настройки аккаунта</h2>
-                        
-                        <div class="settings-section">
-                            <h3>Уведомления</h3>
-                            <div class="setting-item">
-                                <label class="switch">
-                                    <input type="checkbox" checked>
-                                    <span class="slider"></span>
-                                </label>
-                                <div class="setting-info">
-                                    <h4>Уведомления о войнах</h4>
-                                    <p>Получать уведомления о начале войн с участием вашей нации</p>
-                                </div>
-                            </div>
-                            
-                            <div class="setting-item">
-                                <label class="switch">
-                                    <input type="checkbox" checked>
-                                    <span class="slider"></span>
-                                </label>
-                                <div class="setting-info">
-                                    <h4>Дипломатические уведомления</h4>
-                                    <p>Уведомления о предложениях союзов и торговых сделок</p>
-                                </div>
-                            </div>
-                            
-                            <div class="setting-item">
-                                <label class="switch">
-                                    <input type="checkbox">
-                                    <span class="slider"></span>
-                                </label>
-                                <div class="setting-info">
-                                    <h4>Новости сервера</h4>
-                                    <p>Получать уведомления о новостях и обновлениях сервера</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="settings-section">
-                            <h3>Конфиденциальность</h3>
-                            <div class="setting-item">
-                                <label class="switch">
-                                    <input type="checkbox" checked>
-                                    <span class="slider"></span>
-                                </label>
-                                <div class="setting-info">
-                                    <h4>Отображать статистику</h4>
-                                    <p>Разрешить другим игрокам просматривать вашу статистику</p>
-                                </div>
-                            </div>
-                            
-                            <div class="setting-item">
-                                <label class="switch">
-                                    <input type="checkbox">
-                                    <span class="slider"></span>
-                                </label>
-                                <div class="setting-info">
-                                    <h4>Скрыть режим онлайн</h4>
-                                    <p>Скрыть ваш статус онлайн от других игроков</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="settings-actions">
-                            <button class="save-settings">Сохранить настройки</button>
-                            <button class="reset-settings">Сбросить настройки</button>
-                        </div>
-                    </div>
+    <!-- Account Content -->
+    <div class="account-container">
+        <div class="account-header">
+            <div class="user-profile">
+                <img src="images/player-avatar.png" alt="Аватар" class="user-avatar" id="user-avatar">
+                <div class="user-info">
+                    <h1 id="user-displayname">Загрузка...</h1>
+                    <div class="user-rank" id="user-rank">Игрок</div>
                 </div>
             </div>
         </div>
-    </section>
 
-    <!--Footer-->
+        <div class="account-stats">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="stat-number" id="stat-playtime">0ч</div>
+                <div class="stat-label">Время в игре</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-trophy"></i>
+                </div>
+                <div class="stat-number" id="stat-level">1</div>
+                <div class="stat-label">Уровень</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-coins"></i>
+                </div>
+                <div class="stat-number" id="stat-balance">0</div>
+                <div class="stat-label">FL Coins</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-number" id="stat-friends">0</div>
+                <div class="stat-label">Друзей</div>
+            </div>
+        </div>
+
+        <div class="account-sections">
+            <div class="section-card">
+                <h2>Мой профиль</h2>
+                <div class="action-buttons">
+                    <button class="btn-account btn-primary" onclick="editProfile()">
+                        <i class="fas fa-user-edit"></i>
+                        Редактировать профиль
+                    </button>
+                    <button class="btn-account btn-secondary" onclick="changePassword()">
+                        <i class="fas fa-key"></i>
+                        Сменить пароль
+                    </button>
+                    <button class="btn-account btn-secondary" onclick="showSettings()">
+                        <i class="fas fa-cog"></i>
+                        Настройки аккаунта
+                    </button>
+                </div>
+            </div>
+
+            <div class="section-card">
+                <h2>Игровая статистика</h2>
+                <div class="action-buttons">
+                    <button class="btn-account btn-secondary" onclick="showStats()">
+                        <i class="fas fa-chart-line"></i>
+                        Подробная статистика
+                    </button>
+                    <button class="btn-account btn-secondary" onclick="showAchievements()">
+                        <i class="fas fa-trophy"></i>
+                        Достижения
+                    </button>
+                    <button class="btn-account btn-secondary" onclick="showInventory()">
+                        <i class="fas fa-backpack"></i>
+                        Инвентарь
+                    </button>
+                </div>
+            </div>
+
+            <div class="section-card">
+                <h2>Государство</h2>
+                <div class="action-buttons">
+                    <button class="btn-account btn-primary" onclick="showNation()">
+                        <i class="fas fa-landmark"></i>
+                        Моя нация
+                    </button>
+                    <button class="btn-account btn-secondary" onclick="showCity()">
+                        <i class="fas fa-city"></i>
+                        Мой город
+                    </button>
+                    <button class="btn-account btn-secondary" onclick="showDiplomacy()">
+                        <i class="fas fa-handshake"></i>
+                        Дипломатия
+                    </button>
+                </div>
+            </div>
+
+            <div class="section-card">
+                <h2>Социальное</h2>
+                <div class="action-buttons">
+                    <button class="btn-account btn-secondary" onclick="showFriends()">
+                        <i class="fas fa-users"></i>
+                        Друзья
+                    </button>
+                    <button class="btn-account btn-secondary" onclick="showMessages()">
+                        <i class="fas fa-envelope"></i>
+                        Сообщения
+                    </button>
+                    <button class="btn-account btn-secondary" onclick="showClan()">
+                        <i class="fas fa-shield-alt"></i>
+                        Клан/Гильдия
+                    </button>
+                </div>
+            </div>
+
+            <div class="section-card">
+                <h2>Экономика</h2>
+                <div class="action-buttons">
+                    <button class="btn-account btn-secondary" onclick="showBank()">
+                        <i class="fas fa-piggy-bank"></i>
+                        Банк
+                    </button>
+                    <button class="btn-account btn-secondary" onclick="showMarket()">
+                        <i class="fas fa-store"></i>
+                        Рынок
+                    </button>
+                    <button class="btn-account btn-secondary" onclick="showTransactions()">
+                        <i class="fas fa-receipt"></i>
+                        История операций
+                    </button>
+                </div>
+            </div>
+
+            <div class="section-card">
+                <h2>Последняя активность</h2>
+                <ul class="recent-activity" id="recent-activity">
+                    <li class="activity-item">
+                        <i class="fas fa-info-circle"></i>
+                        Загрузка активности...
+                        <span class="activity-time">только что</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="logout-section">
+            <button class="btn-account btn-warning" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i>
+                Выйти из аккаунта
+            </button>
+            <p style="margin-top: 15px; color: #7f8c8d;">
+                Последний вход: <span id="last-login">загрузка...</span>
+            </p>
+        </div>
+    </div>
+
+    <!-- Footer -->
     <footer id="footer">
         <p class="copyright">&copy; 2025 <span class="server-name-footer">Federal League</span>. Все права завоёванны.</p>
         <div class="social-links">
@@ -454,8 +428,191 @@ document.addEventListener('DOMContentLoaded', function() {
             <a href="#" class="link discord-link-footer"><i class="fa-brands fa-discord"></i></a>
         </div>
     </footer>
+
+    <script>
+    // Проверка валидности сессии
+    function isValidUserSession(userData) {
+        if (!userData) return false;
+        if (!userData.id || !userData.username || !userData.isValid) return false;
+        
+        // Проверяем, не истекла ли сессия (7 дней)
+        const sessionDuration = 7 * 24 * 60 * 60 * 1000;
+        const now = new Date().getTime();
+        const lastLogin = new Date(userData.lastLogin).getTime();
+        
+        return (now - lastLogin) < sessionDuration;
+    }
+
+    // Функция для показа уведомлений
+    function showNotification(message, type = 'info') {
+        const notification = document.createElement('div');
+        notification.className = `notification ${type}`;
+        notification.innerHTML = `
+            <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}"></i>
+            <span>${message}</span>
+        `;
+        
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.classList.add('show');
+        }, 100);
+        
+        setTimeout(() => {
+            notification.classList.remove('show');
+            setTimeout(() => {
+                notification.remove();
+            }, 300);
+        }, 5000);
+    }
+
+    // Загрузка данных пользователя
+    async function loadUserData() {
+        try {
+            const userData = JSON.parse(localStorage.getItem('currentUser'));
+            
+            if (!userData || !isValidUserSession(userData)) {
+                throw new Error('Невалидная сессия');
+            }
+
+            // Заполняем данные на странице
+            document.getElementById('user-displayname').textContent = userData.displayName;
+            document.getElementById('user-rank').textContent = userData.rank || 'Игрок';
+            document.getElementById('user-avatar').src = userData.avatar || 'images/player-avatar.png';
+            
+            // Форматируем дату последнего входа
+            if (userData.lastLogin) {
+                const lastLogin = new Date(userData.lastLogin);
+                document.getElementById('last-login').textContent = lastLogin.toLocaleString('ru-RU');
+            }
+
+            // Здесь можно добавить загрузку дополнительных данных из Firestore
+            // await loadAdditionalUserData(userData.id);
+
+            // Заглушки для статистики (в реальном проекте загружайте из Firestore)
+            document.getElementById('stat-playtime').textContent = '85ч';
+            document.getElementById('stat-level').textContent = '15';
+            document.getElementById('stat-balance').textContent = '1,250';
+            document.getElementById('stat-friends').textContent = '8';
+
+            // Заглушка для активности
+            const activityList = document.getElementById('recent-activity');
+            activityList.innerHTML = `
+                <li class="activity-item">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Успешный вход в систему
+                    <span class="activity-time">только что</span>
+                </li>
+                <li class="activity-item">
+                    <i class="fas fa-coins"></i>
+                    Получено 50 FL Coins за ежедневный бонус
+                    <span class="activity-time">2 часа назад</span>
+                </li>
+                <li class="activity-item">
+                    <i class="fas fa-building"></i>
+                    Построено новое здание в городе
+                    <span class="activity-time">5 часов назад</span>
+                </li>
+                <li class="activity-item">
+                    <i class="fas fa-handshake"></i>
+                    Подписан торговый договор с соседним государством
+                    <span class="activity-time">вчера</span>
+                </li>
+            `;
+
+        } catch (error) {
+            console.error('Ошибка загрузки данных:', error);
+            showNotification('Ошибка загрузки данных. Перенаправление на страницу входа...', 'error');
+            setTimeout(() => {
+                window.location.href = 'login.html';
+            }, 2000);
+        }
+    }
+
+    // Выход из аккаунта
+    function logout() {
+        if (confirm('Вы уверены, что хотите выйти?')) {
+            localStorage.removeItem('currentUser');
+            showNotification('Выход выполнен успешно', 'success');
+            setTimeout(() => {
+                window.location.href = 'login.html';
+            }, 1000);
+        }
+    }
+
+    // Заглушки для функций
+    function editProfile() {
+        showNotification('Редактирование профиля временно недоступно', 'info');
+    }
+
+    function changePassword() {
+        showNotification('Смена пароля временно недоступна', 'info');
+    }
+
+    function showSettings() {
+        showNotification('Настройки временно недоступны', 'info');
+    }
+
+    function showStats() {
+        showNotification('Статистика временно недоступна', 'info');
+    }
+
+    function showAchievements() {
+        showNotification('Достижения временно недоступны', 'info');
+    }
+
+    function showInventory() {
+        showNotification('Инвентарь временно недоступен', 'info');
+    }
+
+    function showNation() {
+        showNotification('Информация о нации временно недоступна', 'info');
+    }
+
+    function showCity() {
+        showNotification('Информация о городе временно недоступна', 'info');
+    }
+
+    function showDiplomacy() {
+        showNotification('Дипломатия временно недоступна', 'info');
+    }
+
+    function showFriends() {
+        showNotification('Список друзей временно недоступен', 'info');
+    }
+
+    function showMessages() {
+        showNotification('Сообщения временно недоступны', 'info');
+    }
+
+    function showClan() {
+        showNotification('Информация о клане временно недоступна', 'info');
+    }
+
+    function showBank() {
+        showNotification('Банковские операции временно недоступны', 'info');
+    }
+
+    function showMarket() {
+        showNotification('Рынок временно недоступен', 'info');
+    }
+
+    function showTransactions() {
+        showNotification('История операций временно недоступна', 'info');
+    }
+
+    // Инициализация при загрузке страницы
+    document.addEventListener('DOMContentLoaded', function() {
+        const userData = JSON.parse(localStorage.getItem('currentUser') || 'null');
+        
+        if (!userData || !isValidUserSession(userData)) {
+            localStorage.removeItem('currentUser');
+            window.location.href = 'login.html';
+            return;
+        }
+        
+        loadUserData();
+    });
+    </script>
 </body>
-<script src="js/script.js"></script>
-<script src="js/account.js"></script>
-<script src="https://kit.fontawesome.com/cbf5ee59c8.js" crossorigin="anonymous"></script>
 </html>
