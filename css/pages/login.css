@@ -1,0 +1,194 @@
+#login {
+    padding: 100px 20px;
+    min-height: 100vh;
+    background: linear-gradient(135deg, var(--background-dark) 0%, var(--background-darker) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-container {
+    background: var(--background-light);
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    width: 100%;
+    max-width: 450px;
+}
+
+.login-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.login-logo {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 20px;
+}
+
+.login-header h2 {
+    color: var(--text-light);
+    margin-bottom: 10px;
+    font-size: 28px;
+}
+
+.login-header p {
+    color: var(--text-muted);
+    font-size: 16px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    color: var(--text-light);
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 15px;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--background-dark);
+    color: var(--text-light);
+    font-size: 16px;
+    transition: border-color 0.3s ease;
+}
+
+.form-group input:focus {
+    border-color: var(--accent-color);
+    outline: none;
+}
+
+.form-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.remember-me {
+    display: flex;
+    align-items: center;
+    color: var(--text-light);
+    cursor: pointer;
+}
+
+.remember-me input {
+    margin-right: 8px;
+}
+
+.forgot-password {
+    color: var(--accent-color);
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.forgot-password:hover {
+    text-decoration: underline;
+}
+
+.login-btn {
+    width: 100%;
+    padding: 15px;
+    background: var(--accent-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.login-btn:hover {
+    background: var(--accent-hover);
+}
+
+.register-link {
+    text-align: center;
+    margin-top: 20px;
+    color: var(--text-muted);
+}
+
+.register-link a {
+    color: var(--accent-color);
+    text-decoration: none;
+}
+
+.register-link a:hover {
+    text-decoration: underline;
+}
+
+.login-alternative {
+    margin-top: 30px;
+}
+
+.divider {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    color: var(--text-muted);
+}
+
+.divider::before,
+.divider::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--border-color);
+}
+
+.divider span {
+    padding: 0 15px;
+}
+
+.alternative-buttons {
+    display: flex;
+    gap: 15px;
+}
+
+.discord-login,
+.vk-login {
+    flex: 1;
+    padding: 12px;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    background: transparent;
+    color: var(--text-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.discord-login:hover {
+    background: #5865F2;
+    border-color: #5865F2;
+}
+
+.vk-login:hover {
+    background: #0077FF;
+    border-color: #0077FF;
+}
+
+@media (max-width: 768px) {
+    #login {
+        padding: 80px 15px;
+    }
+    
+    .login-container {
+        padding: 30px 25px;
+    }
+    
+    .alternative-buttons {
+        flex-direction: column;
+    }
+}
