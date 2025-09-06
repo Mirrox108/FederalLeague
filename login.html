@@ -25,7 +25,7 @@
             </div>
 
             <div class="form-content">
-                <div class="form-message" id="login-message">
+                <div class="form-message" id="login-message" style="display: none;">
                     <i class="fas fa-exclamation-circle"></i>
                     <span id="message-text"></span>
                 </div>
@@ -93,8 +93,25 @@
     const db = firebase.firestore();
     const auth = firebase.auth();
 
+    // Функция для проверки валидности пользовательской сессии
+    function isValidUserSession(userData) {
+        if (!userData) return false;
+        if (!userData.id || !userData.username) return false;
+        
+        // Проверяем, не истекла ли сессия (например, 7 дней)
+        const sessionDuration = 7 * 24 * 60 * 60 * 1000; // 7 дней в миллисекундах
+        const now = new Date().getTime();
+        const lastLogin = new Date(userData.lastLogin).getTime();
+        
+        return (now - lastLogin) < sessionDuration;
+    }
+
     // Функция для показа уведомлений
     function showNotification(message, type = 'info') {
+        // Скрываем предыдущие уведомления
+        const existingNotifications = document.querySelectorAll('.notification');
+        existingNotifications.forEach(notification => notification.remove());
+        
         const notification = document.createElement('div');
         notification.className = `notification ${type}`;
         notification.innerHTML = `
@@ -116,7 +133,22 @@
         }, 5000);
     }
 
-    // Функция для поиска пользователя в Firestore по логину или email
+    // Функция для показа сообщения в форме
+    function showFormMessage(message, type = 'error') {
+        const messageElement = document.getElementById('login-message');
+        const messageText = document.getElementById('message-text');
+        
+        messageElement.style.display = 'flex';
+        messageText.textContent = message;
+        messageElement.className = `form-message ${type}`;
+    }
+
+    // Функция для скрытия сообщения в форме
+    function hideFormMessage() {
+        document.getElementById('login-message').style.display = 'none';
+    }
+
+    // Функция для поиска пользователя в Firestore
     async function findUserInFirestore(login) {
         try {
             // Сначала ищем по username
@@ -156,7 +188,7 @@
 
     // Функция для проверки пароля
     function verifyPassword(inputPassword, storedPassword) {
-        // Простая проверка пароля (в реальном проекте используйте хеширование)
+        // Простая проверка пароля
         return inputPassword === storedPassword;
     }
 
@@ -194,9 +226,11 @@
         const remember = document.getElementById('remember-me').checked;
         
         if (!login || !password) {
-            showNotification('Заполните все поля', 'error');
+            showFormMessage('Заполните все поля', 'error');
             return;
         }
+        
+        hideFormMessage();
         
         const loginBtn = document.getElementById('login-btn');
         const originalText = loginBtn.innerHTML;
@@ -212,7 +246,7 @@
             const userResult = await findUserInFirestore(login);
             
             if (!userResult) {
-                showNotification('Пользователь не найден', 'error');
+                showFormMessage('Пользователь не найден', 'error');
                 return;
             }
             
@@ -220,13 +254,13 @@
             
             // Проверяем пароль
             if (!verifyPassword(password, userData.password)) {
-                showNotification('Неверный пароль', 'error');
+                showFormMessage('Неверный пароль', 'error');
                 return;
             }
             
-            // Проверяем, активирован ли аккаунт
+            // Проверяем статус аккаунта
             if (userData.status !== 'active') {
-                showNotification('Аккаунт не активирован или заблокирован', 'error');
+                showFormMessage('Аккаунт не активирован или заблокирован', 'error');
                 return;
             }
             
@@ -241,7 +275,8 @@
                 displayName: userData.displayName || userData.username,
                 rank: userData.rank || 'player',
                 avatar: userData.avatar || 'images/player-avatar.png',
-                lastLogin: new Date().toISOString()
+                lastLogin: new Date().toISOString(),
+                isValid: true
             };
             
             localStorage.setItem('currentUser', JSON.stringify(userSession));
@@ -262,7 +297,7 @@
             
         } catch (error) {
             console.error('Ошибка входа:', error);
-            showNotification(error.message || 'Ошибка входа. Попробуйте позже.', 'error');
+            showFormMessage(error.message || 'Ошибка входа. Попробуйте позже.', 'error');
         } finally {
             loginBtn.innerHTML = originalText;
             loginBtn.disabled = false;
@@ -279,10 +314,21 @@
 
     // Проверка при загрузке страницы
     document.addEventListener('DOMContentLoaded', function() {
-        const currentUser = localStorage.getItem('currentUser');
-        if (currentUser) {
-            window.location.href = 'account.html';
-            return;
+        // Проверяем, есть ли валидная сессия
+        try {
+            const userData = JSON.parse(localStorage.getItem('currentUser') || 'null');
+            
+            if (userData && isValidUserSession(userData)) {
+                // Если сессия валидна, перенаправляем в аккаунт
+                window.location.href = 'account.html';
+                return;
+            } else if (userData) {
+                // Если сессия невалидна, очищаем
+                localStorage.removeItem('currentUser');
+            }
+        } catch (error) {
+            console.error('Ошибка проверки сессии:', error);
+            localStorage.removeItem('currentUser');
         }
         
         // Автозаполнение логина, если пользователь выбрал "Запомнить меня"
