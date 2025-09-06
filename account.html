@@ -11,6 +11,21 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <style>
+        /* Основные цвета как в login/register */
+        :root {
+            --primary-color: #1a2a6c;
+            --secondary-color: #b21f1f;
+            --accent-color: #fdbb2d;
+            --success-color: #4CAF50;
+            --error-color: #e74c3c;
+            --warning-color: #f39c12;
+            --info-color: #3498db;
+            --text-color: #333;
+            --text-light: #7f8c8d;
+            --bg-light: #f8f9fa;
+            --border-color: #ddd;
+        }
+
         /* Стили для личного кабинета */
         .account-container {
             max-width: 1200px;
@@ -19,12 +34,13 @@
         }
 
         .account-header {
-            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            background: linear-gradient(135deg, var(--primary-color) 0%, #233a9e 100%);
             padding: 30px;
             border-radius: 15px;
             margin-bottom: 30px;
             color: white;
             text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
 
         .user-profile {
@@ -39,23 +55,27 @@
             width: 100px;
             height: 100px;
             border-radius: 50%;
-            border: 4px solid #4CAF50;
+            border: 4px solid var(--accent-color);
             object-fit: cover;
+            background: white;
         }
 
         .user-info h1 {
             margin: 0;
             font-size: 2.5em;
             color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
         }
 
         .user-rank {
-            background: #4CAF50;
-            padding: 5px 15px;
+            background: var(--accent-color);
+            padding: 8px 20px;
             border-radius: 20px;
             font-size: 0.9em;
-            margin-top: 5px;
+            margin-top: 10px;
             display: inline-block;
+            color: #333;
+            font-weight: 600;
         }
 
         .account-stats {
@@ -67,34 +87,42 @@
 
         .stat-card {
             background: white;
-            padding: 20px;
+            padding: 25px;
             border-radius: 10px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             text-align: center;
+            border: 1px solid var(--border-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
         }
 
         .stat-icon {
-            font-size: 2em;
-            color: #4CAF50;
-            margin-bottom: 10px;
+            font-size: 2.5em;
+            color: var(--primary-color);
+            margin-bottom: 15px;
         }
 
         .stat-number {
-            font-size: 2em;
+            font-size: 2.2em;
             font-weight: bold;
-            color: #2c3e50;
+            color: var(--primary-color);
             margin: 10px 0;
         }
 
         .stat-label {
-            color: #7f8c8d;
-            font-size: 0.9em;
+            color: var(--text-light);
+            font-size: 0.95em;
+            font-weight: 500;
         }
 
         .account-sections {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
+            gap: 25px;
         }
 
         .section-card {
@@ -102,22 +130,24 @@
             padding: 25px;
             border-radius: 10px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border: 1px solid var(--border-color);
         }
 
         .section-card h2 {
-            color: #2c3e50;
+            color: var(--primary-color);
             margin-bottom: 20px;
-            border-bottom: 2px solid #4CAF50;
-            padding-bottom: 10px;
+            border-bottom: 3px solid var(--accent-color);
+            padding-bottom: 12px;
+            font-size: 1.4em;
         }
 
         .action-buttons {
             display: grid;
-            gap: 10px;
+            gap: 12px;
         }
 
         .btn-account {
-            padding: 12px 20px;
+            padding: 14px 20px;
             border: none;
             border-radius: 8px;
             cursor: pointer;
@@ -125,37 +155,41 @@
             transition: all 0.3s ease;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
+            font-weight: 600;
         }
 
         .btn-primary {
-            background: #4CAF50;
+            background: var(--primary-color);
             color: white;
         }
 
         .btn-primary:hover {
-            background: #45a049;
+            background: #233a9e;
             transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(26, 42, 108, 0.3);
         }
 
         .btn-secondary {
-            background: #3498db;
+            background: var(--info-color);
             color: white;
         }
 
         .btn-secondary:hover {
             background: #2980b9;
             transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
         }
 
         .btn-warning {
-            background: #e74c3c;
+            background: var(--error-color);
             color: white;
         }
 
         .btn-warning:hover {
             background: #c0392b;
             transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
         }
 
         .recent-activity {
@@ -165,14 +199,19 @@
 
         .activity-item {
             padding: 15px;
-            border-left: 4px solid #4CAF50;
-            background: #f8f9fa;
-            margin-bottom: 10px;
-            border-radius: 4px;
+            border-left: 4px solid var(--accent-color);
+            background: var(--bg-light);
+            margin-bottom: 12px;
+            border-radius: 6px;
+            transition: transform 0.2s ease;
+        }
+
+        .activity-item:hover {
+            transform: translateX(5px);
         }
 
         .activity-time {
-            color: #7f8c8d;
+            color: var(--text-light);
             font-size: 0.8em;
             display: block;
             margin-top: 5px;
@@ -181,9 +220,32 @@
         .logout-section {
             text-align: center;
             margin-top: 40px;
-            padding: 20px;
-            background: #f8f9fa;
+            padding: 25px;
+            background: var(--bg-light);
             border-radius: 10px;
+            border: 1px solid var(--border-color);
+        }
+
+        .auth-status {
+            margin: 15px 0;
+            padding: 12px;
+            border-radius: 8px;
+            background: var(--bg-light);
+            text-align: center;
+            font-size: 0.9em;
+            border: 1px solid var(--border-color);
+        }
+
+        .auth-status.authenticated {
+            background: #e8f5e9;
+            color: #2e7d32;
+            border-color: #4CAF50;
+        }
+
+        .auth-status.not-authenticated {
+            background: #ffebee;
+            color: #c62828;
+            border-color: #e74c3c;
         }
 
         @media (max-width: 768px) {
@@ -198,6 +260,10 @@
             
             .account-sections {
                 grid-template-columns: 1fr;
+            }
+            
+            .user-info h1 {
+                font-size: 2em;
             }
         }
 
@@ -215,6 +281,7 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
 
         .notification.show {
@@ -223,38 +290,50 @@
         }
 
         .notification.success {
-            background: #4CAF50;
+            background: var(--success-color);
         }
 
         .notification.error {
-            background: #e74c3c;
+            background: var(--error-color);
         }
 
         .notification.warning {
-            background: #f39c12;
+            background: var(--warning-color);
         }
 
         .notification.info {
-            background: #3498db;
+            background: var(--info-color);
         }
 
-        .auth-status {
-            margin: 10px 0;
-            padding: 10px;
-            border-radius: 5px;
-            background: #f8f9fa;
-            text-align: center;
-            font-size: 0.9em;
+        /* Стили для навбара и футера чтобы соответствовать цветовой гамме */
+        .navbar {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #233a9e 100%);
+            margin-bottom: 20px;
         }
 
-        .auth-status.authenticated {
-            background: #e8f5e9;
-            color: #2e7d32;
+        .navbar .link.active {
+            background: rgba(255, 255, 255, 0.2);
+            color: var(--accent-color);
         }
 
-        .auth-status.not-authenticated {
-            background: #ffebee;
-            color: #c62828;
+        .navbar .link:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        #footer {
+            background: var(--primary-color);
+            color: white;
+            margin-top: 40px;
+        }
+
+        .server-name-footer {
+            color: var(--accent-color);
+        }
+
+        .social-links .link:hover {
+            background: var(--accent-color);
+            color: #333;
         }
     </style>
 </head>
@@ -440,7 +519,7 @@
                 <i class="fas fa-sign-out-alt"></i>
                 Выйти из аккаунта
             </button>
-            <p style="margin-top: 15px; color: #7f8c8d;">
+            <p style="margin-top: 15px; color: var(--text-light);">
                 Последний вход: <span id="last-login">загрузка...</span>
             </p>
         </div>
