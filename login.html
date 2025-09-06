@@ -115,18 +115,6 @@
         }, 5000);
     }
 
-    // Функция для определения IP-адреса
-    async function getIPAddress() {
-        try {
-            const response = await fetch('https://api.ipify.org?format=json');
-            const data = await response.json();
-            return data.ip;
-        } catch (error) {
-            console.error('Ошибка получения IP:', error);
-            return 'unknown';
-        }
-    }
-
     // Обработка формы входа
     document.getElementById('login-form').addEventListener('submit', async function(e) {
         e.preventDefault();
@@ -147,12 +135,18 @@
         loginBtn.disabled = true;
         
         try {
+            // Устанавливаем persistence ДО аутентификации
+            const persistence = remember ? 
+                firebase.auth.Auth.Persistence.LOCAL : 
+                firebase.auth.Auth.Persistence.SESSION;
+            
+            await auth.setPersistence(persistence);
+            
             // Определяем, является ли ввод email'ом или именем пользователя
             const isEmail = login.includes('@');
-            
             let emailToUse = login;
             
-            // Если введено имя пользователя, а не email, ищем соответствующий email в Firestore
+            // Если введено имя пользователя, ищем соответствующий email
             if (!isEmail) {
                 const usersRef = db.collection('users');
                 const querySnapshot = await usersRef
@@ -171,11 +165,11 @@
                 emailToUse = userDoc.data().email;
             }
             
-            // Выполняем аутентификацию через Firebase Auth
+            // Выполняем аутентификацию
             const userCredential = await auth.signInWithEmailAndPassword(emailToUse, password);
             const user = userCredential.user;
             
-            // Получаем дополнительные данные пользователя из Firestore
+            // Получаем данные пользователя из Firestore
             const userDoc = await db.collection('users').doc(user.uid).get();
             
             if (!userDoc.exists) {
@@ -188,15 +182,6 @@
             
             const userData = userDoc.data();
             
-            // Получаем IP-адрес
-            const ip = await getIPAddress();
-            
-            // Обновляем информацию о последнем входе
-            await db.collection('users').doc(user.uid).update({
-                lastLogin: new Date(),
-                lastIP: ip
-            });
-            
             // Сохраняем данные пользователя
             const userSessionData = {
                 uid: user.uid,
@@ -207,13 +192,6 @@
             };
             
             localStorage.setItem('currentUser', JSON.stringify(userSessionData));
-            
-            // Устанавливаем persistence в зависимости от выбора "Запомнить меня"
-            const persistence = remember ? 
-                firebase.auth.Auth.Persistence.LOCAL : 
-                firebase.auth.Auth.Persistence.SESSION;
-            
-            await auth.setPersistence(persistence);
             
             // Запоминаем пользователя, если выбрана опция
             if (remember) {
@@ -267,117 +245,33 @@
 
     // Проверка при загрузке страницы
     document.addEventListener('DOMContentLoaded', function() {
-        // Проверяем состояние аутентификации Firebase
-        auth.onAuthStateChanged(async (user) => {
+        // Проверяем, не авторизован ли уже пользователь
+        auth.onAuthStateChanged((user) => {
             if (user) {
-                // Пользователь авторизован в Firebase
-                try {
-                    // Получаем данные пользователя из Firestore
-                    const userDoc = await db.collection('users').doc(user.uid).get();
-                    
-                    if (userDoc.exists) {
-                        const userData = userDoc.data();
-                        
-                        // Сохраняем данные пользователя в localStorage
-                        const userSessionData = {
-                            uid: user.uid,
-                            email: user.email,
-                            username: userData.username,
-                            displayName: userData.displayName || userData.username,
-                            role: userData.role || 'user'
-                        };
-                        
-                        localStorage.setItem('currentUser', JSON.stringify(userSessionData));
-                        
-                        // Перенаправляем в личный кабинет
-                        window.location.href = 'account.html';
-                    }
-                } catch (error) {
-                    console.error('Ошибка получения данных пользователя:', error);
-                    // В случае ошибки выходим из системы
-                    await auth.signOut();
-                    localStorage.removeItem('currentUser');
-                }
-            } else {
-                // Пользователь не авторизован в Firebase
-                localStorage.removeItem('currentUser');
+                // Пользователь уже авторизован, перенаправляем
+                window.location.href = 'account.html';
             }
         });
         
-        // Автозаполнение логина, если пользователь выбрал "Запомнить меня"
+        // Автозаполнение логина
         const rememberedUser = localStorage.getItem('remembered_user');
         if (rememberedUser) {
             document.getElementById('login-username').value = rememberedUser;
             document.getElementById('remember-me').checked = true;
         }
         
-        // Показываем сообщение об успешной регистрации, если есть
+        // Сообщение об успешной регистрации
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.get('registered') === 'true') {
             showNotification('Регистрация завершена. Теперь вы можете войти.', 'success');
-        }
-        
-        // Показываем сообщение о выходе, если есть
-        if (urlParams.get('logout') === 'true') {
-            showNotification('Вы успешно вышли из системы', 'info');
         }
     });
 
     // Обработка "Забыли пароль?"
     document.getElementById('forgot-password').addEventListener('click', function(e) {
         e.preventDefault();
-        
-        const login = document.getElementById('login-username').value;
-        if (!login) {
-            showNotification('Введите email для восстановления пароля', 'warning');
-            return;
-        }
-        
-        // Определяем, является ли ввод email'ом
-        const isEmail = login.includes('@');
-        let recoveryEmail = login;
-        
-        if (!isEmail) {
-            // Если введено имя пользователя, находим соответствующий email
-            db.collection('users')
-                .where('username', '==', login)
-                .limit(1)
-                .get()
-                .then((querySnapshot) => {
-                    if (!querySnapshot.empty) {
-                        const userDoc = querySnapshot.docs[0];
-                        recoveryEmail = userDoc.data().email;
-                        sendPasswordResetEmail(recoveryEmail);
-                    } else {
-                        showNotification('Пользователь с таким именем не найден', 'error');
-                    }
-                })
-                .catch((error) => {
-                    console.error('Ошибка поиска пользователя:', error);
-                    showNotification('Ошибка при поиске пользователя', 'error');
-                });
-        } else {
-            sendPasswordResetEmail(recoveryEmail);
-        }
+        showNotification('Функция восстановления пароля временно недоступна', 'warning');
     });
-
-    // Функция отправки email для сброса пароля
-    function sendPasswordResetEmail(email) {
-        auth.sendPasswordResetEmail(email)
-            .then(() => {
-                showNotification('Инструкции по восстановлению пароля отправлены на ваш email', 'success');
-            })
-            .catch((error) => {
-                console.error('Ошибка отправки email:', error);
-                
-                let errorMessage = 'Ошибка при отправке email для восстановления пароля';
-                if (error.code === 'auth/user-not-found') {
-                    errorMessage = 'Пользователь с таким email не найден';
-                }
-                
-                showNotification(errorMessage, 'error');
-            });
-    }
     </script>
 </body>
 </html>
