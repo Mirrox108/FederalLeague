@@ -6,6 +6,11 @@
     <title>Вход - Federal League</title>
     <link rel="stylesheet" href="global.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
 </head>
 <body>
     <div class="form-container">
@@ -73,6 +78,21 @@
     </div>
 
     <script>
+    // Инициализация Firebase
+    const firebaseConfig = {
+        apiKey: "YOUR_API_KEY",
+        authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+        projectId: "YOUR_PROJECT_ID",
+        storageBucket: "YOUR_PROJECT_ID.appspot.com",
+        messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+        appId: "YOUR_APP_ID"
+    };
+
+    // Инициализируем Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const auth = firebase.auth();
+
     // Функция для показа уведомлений
     function showNotification(message, type = 'info') {
         const notification = document.createElement('div');
@@ -96,7 +116,64 @@
         }, 5000);
     }
 
-    // Функция для определения IP-адреса
+    // Функция для поиска пользователя в Firestore по логину или email
+    async function findUserInFirestore(login) {
+        try {
+            // Сначала ищем по username
+            const usernameQuery = await db.collection('users')
+                .where('username', '==', login.toLowerCase())
+                .limit(1)
+                .get();
+
+            if (!usernameQuery.empty) {
+                return {
+                    userDoc: usernameQuery.docs[0],
+                    userData: usernameQuery.docs[0].data(),
+                    foundBy: 'username'
+                };
+            }
+
+            // Если не нашли по username, ищем по email
+            const emailQuery = await db.collection('users')
+                .where('email', '==', login.toLowerCase())
+                .limit(1)
+                .get();
+
+            if (!emailQuery.empty) {
+                return {
+                    userDoc: emailQuery.docs[0],
+                    userData: emailQuery.docs[0].data(),
+                    foundBy: 'email'
+                };
+            }
+
+            return null;
+        } catch (error) {
+            console.error('Ошибка поиска пользователя:', error);
+            throw new Error('Ошибка поиска пользователя в базе данных');
+        }
+    }
+
+    // Функция для проверки пароля
+    function verifyPassword(inputPassword, storedPassword) {
+        // Простая проверка пароля (в реальном проекте используйте хеширование)
+        return inputPassword === storedPassword;
+    }
+
+    // Функция для обновления последнего входа
+    async function updateLastLogin(userId, ip) {
+        try {
+            await db.collection('users').doc(userId).update({
+                lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
+                lastIp: ip,
+                loginCount: firebase.firestore.FieldValue.increment(1)
+            });
+        } catch (error) {
+            console.error('Ошибка обновления данных входа:', error);
+        }
+    }
+
+    // Функция для получения IP-адреса
     async function getIPAddress() {
         try {
             const response = await fetch('https://api.ipify.org?format=json');
@@ -108,105 +185,89 @@
         }
     }
 
-	// Обработка формы входа
-	document.getElementById('login-form').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    
-    const login = document.getElementById('login-username').value;
-    const password = document.getElementById('login-password').value;
-    const remember = document.getElementById('remember-me').checked;
-    
-    if (!login || !password) {
-        showNotification('Заполните все поля', 'error');
-        return;
-    }
-    
-    const loginBtn = document.getElementById('login-btn');
-    const originalText = loginBtn.innerHTML;
-    
-    loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Вход...';
-    loginBtn.disabled = true;
-    
-    try {
-        // Получаем IP-адрес
-        const ip = await getIPAddress();
+    // Обработка формы входа
+    document.getElementById('login-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
         
-        // ОТПРАВЛЯЕМ ЗАПРОС НА ПРАВИЛЬНЫЙ ПУТЬ
-        const response = await fetch('api/auth.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                action: 'login',
-                username: login,
-                password: password,
-                ip: ip
-            })
-        });
+        const login = document.getElementById('login-username').value.trim();
+        const password = document.getElementById('login-password').value;
+        const remember = document.getElementById('remember-me').checked;
         
-        // Проверяем статус ответа
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+        if (!login || !password) {
+            showNotification('Заполните все поля', 'error');
+            return;
         }
         
-        const result = await response.json();
+        const loginBtn = document.getElementById('login-btn');
+        const originalText = loginBtn.innerHTML;
         
-        if (result.success) {
-            showNotification('Вход выполнен успешно!', 'success');
+        loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Вход...';
+        loginBtn.disabled = true;
+        
+        try {
+            // Получаем IP-адрес
+            const ip = await getIPAddress();
+            
+            // Ищем пользователя в Firestore
+            const userResult = await findUserInFirestore(login);
+            
+            if (!userResult) {
+                showNotification('Пользователь не найден', 'error');
+                return;
+            }
+            
+            const { userDoc, userData, foundBy } = userResult;
+            
+            // Проверяем пароль
+            if (!verifyPassword(password, userData.password)) {
+                showNotification('Неверный пароль', 'error');
+                return;
+            }
+            
+            // Проверяем, активирован ли аккаунт
+            if (userData.status !== 'active') {
+                showNotification('Аккаунт не активирован или заблокирован', 'error');
+                return;
+            }
+            
+            // Обновляем данные последнего входа
+            await updateLastLogin(userDoc.id, ip);
             
             // Сохраняем данные пользователя
-            localStorage.setItem('currentUser', JSON.stringify(result.user));
+            const userSession = {
+                id: userDoc.id,
+                username: userData.username,
+                email: userData.email,
+                displayName: userData.displayName || userData.username,
+                rank: userData.rank || 'player',
+                avatar: userData.avatar || 'images/player-avatar.png',
+                lastLogin: new Date().toISOString()
+            };
+            
+            localStorage.setItem('currentUser', JSON.stringify(userSession));
             
             // Запоминаем пользователя, если выбрана опция
             if (remember) {
                 localStorage.setItem('remembered_user', login);
+            } else {
+                localStorage.removeItem('remembered_user');
             }
+            
+            showNotification('Вход выполнен успешно!', 'success');
             
             // Перенаправляем в личный кабинет
             setTimeout(() => {
                 window.location.href = 'account.html';
             }, 1000);
-        } else {
-            showNotification(result.message, 'error');
+            
+        } catch (error) {
+            console.error('Ошибка входа:', error);
+            showNotification(error.message || 'Ошибка входа. Попробуйте позже.', 'error');
+        } finally {
+            loginBtn.innerHTML = originalText;
+            loginBtn.disabled = false;
         }
-    } catch (error) {
-        console.error('Ошибка входа:', error);
-        showNotification('Ошибка соединения с сервером: ' + error.message, 'error');
-    } finally {
-        loginBtn.innerHTML = originalText;
-        loginBtn.disabled = false;
-    }
-});
-
-// Функция для проверки доступности API
-async function checkApiAvailability() {
-    try {
-        const response = await fetch('api/auth.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ action: 'test' })
-        });
-        
-        if (response.ok) {
-            console.log('API доступен');
-            return true;
-        }
-    } catch (error) {
-        console.warn('API недоступен:', error);
-    }
-    return false;
-}
-
-// Проверка при загрузке страницы
-document.addEventListener('DOMContentLoaded', function() {
-    // ... существующий код ...
-    
-    // Проверяем доступность API
-    checkApiAvailability();
-});
+    });
 
     // Переключение видимости пароля
     document.getElementById('toggle-password').addEventListener('click', function() {
@@ -235,6 +296,15 @@ document.addEventListener('DOMContentLoaded', function() {
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.get('registered') === 'true') {
             showNotification('Регистрация завершена. Теперь вы можете войти.', 'success');
+        }
+        
+        // Проверяем доступность Firebase
+        try {
+            if (firebase.apps.length === 0) {
+                showNotification('Ошибка инициализации Firebase. Проверьте конфигурацию.', 'error');
+            }
+        } catch (error) {
+            console.error('Firebase не инициализирован:', error);
         }
     });
 
