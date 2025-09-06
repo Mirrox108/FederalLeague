@@ -27,8 +27,8 @@
 
                 <form id="login-form">
                     <div class="form-group">
-                        <label for="login-username">Имя пользователя или Email</label>
-                        <input type="text" id="login-username" name="username" required placeholder="Введите ваш логин или email">
+                        <label for="login-email">Email адрес</label>
+                        <input type="email" id="login-email" name="email" required placeholder="Введите ваш email">
                     </div>
 
                     <div class="form-group">
@@ -75,12 +75,12 @@
                         <i class="fas fa-users"></i> Демо-аккаунты
                     </h4>
                     
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
                         <div style="padding: 10px; background: rgba(255,255,255,0.05); border-radius: 6px; text-align: center;">
                             <div style="font-weight: bold; color: var(--main-color); margin-bottom: 5px;">Администратор</div>
-                            <div style="font-size: 12px; color: var(--description-color);">Логин: <strong>admin</strong></div>
+                            <div style="font-size: 12px; color: var(--description-color);">Email: <strong>admin@federal.ru</strong></div>
                             <div style="font-size: 12px; color: var(--description-color);">Пароль: <strong>admin123</strong></div>
-                            <button onclick="fillDemoCredentials('admin', 'admin123')" 
+                            <button onclick="fillDemoCredentials('admin@federal.ru', 'admin123')" 
                                     style="margin-top: 8px; padding: 5px 10px; background: var(--main-color); border: none; border-radius: 4px; color: var(--black-color); font-size: 11px; cursor: pointer;">
                                 Быстрый вход
                             </button>
@@ -88,241 +88,211 @@
                         
                         <div style="padding: 10px; background: rgba(255,255,255,0.05); border-radius: 6px; text-align: center;">
                             <div style="font-weight: bold; color: var(--main-color); margin-bottom: 5px;">Игрок</div>
-                            <div style="font-size: 12px; color: var(--description-color);">Логин: <strong>demo</strong></div>
+                            <div style="font-size: 12px; color: var(--description-color);">Email: <strong>demo@federal.ru</strong></div>
                             <div style="font-size: 12px; color: var(--description-color);">Пароль: <strong>password</strong></div>
-                            <button onclick="fillDemoCredentials('demo', 'password')" 
+                            <button onclick="fillDemoCredentials('demo@federal.ru', 'password')" 
                                     style="margin-top: 8px; padding: 5px 10px; background: var(--main-color); border: none; border-radius: 4px; color: var(--black-color); font-size: 11px; cursor: pointer;">
                                 Быстрый вход
                             </button>
                         </div>
-                    </div>
-                    
-                    <div style="padding: 10px; background: rgba(255,255,255,0.05); border-radius: 6px; text-align: center;">
-                        <div style="font-weight: bold; color: var(--main-color); margin-bottom: 5px;">Модератор</div>
-                        <div style="font-size: 12px; color: var(--description-color);">Логин: <strong>moderator</strong></div>
-                        <div style="font-size: 12px; color: var(--description-color);">Пароль: <strong>mod123</strong></div>
-                        <button onclick="fillDemoCredentials('moderator', 'mod123')" 
-                                style="margin-top: 8px; padding: 5px 10px; background: var(--main-color); border: none; border-radius: 4px; color: var(--black-color); font-size: 11px; cursor: pointer;">
-                            Быстрый вход
-                        </button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <script>
-    // Функция для показа уведомлений
-    function showNotification(message, type = 'info') {
-        const notification = document.createElement('div');
-        notification.className = `notification ${type}`;
-        notification.innerHTML = `
-            <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}"></i>
-            <span>${message}</span>
-        `;
-        
-        document.body.appendChild(notification);
-        
-        setTimeout(() => {
-            notification.classList.add('show');
-        }, 100);
-        
-        setTimeout(() => {
-            notification.classList.remove('show');
-            setTimeout(() => {
-                notification.remove();
-            }, 300);
-        }, 5000);
-    }
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 
-    // Функция для заполнения демо-credentials
-    function fillDemoCredentials(username, password) {
-        document.getElementById('login-username').value = username;
-        document.getElementById('login-password').value = password;
-        document.getElementById('remember-me').checked = true;
-        showNotification(`Данные для ${username} заполнены!`, 'success');
-    }
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBcPC6rEcNLxXAqcRTEjcWXwXrJ7sj43yQ",
+            authDomain: "federalleague-e7452.firebaseapp.com",
+            projectId: "federalleague-e7452",
+            storageBucket: "federalleague-e7452.firebasestorage.app",
+            messagingSenderId: "171537204382",
+            appId: "1:171537204382:web:e2bf1a98447d0f039ce78f"
+        };
 
-    // Функция для определения IP-адреса
-    async function getIPAddress() {
-        try {
-            const response = await fetch('https://api.ipify.org?format=json');
-            const data = await response.json();
-            return data.ip;
-        } catch (error) {
-            console.error('Ошибка получения IP:', error);
-            return 'unknown';
-        }
-    }
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
 
-    // Функция инициализации демо-аккаунтов
-    function initializeDemoAccounts() {
-        let users = JSON.parse(localStorage.getItem('fl_users') || '[]');
-        
-        // Демо-аккаунты
-        const demoAccounts = [
-            {
-                id: 'admin_001',
-                username: 'admin',
-                email: 'admin@federal-league.ru',
-                password: 'admin123',
-                role: 'administrator',
-                balance: 10000,
-                level: 50,
-                playtime: '350 ч',
-                premium: true,
-                registrationDate: new Date('2023-01-15').toISOString(),
-                lastLogin: new Date().toISOString()
-            },
-            {
-                id: 'demo_001',
-                username: 'demo',
-                email: 'demo@federal-league.ru',
-                password: 'password',
-                role: 'player',
-                balance: 1500,
-                level: 24,
-                playtime: '127 ч',
-                premium: false,
-                registrationDate: new Date('2023-03-20').toISOString(),
-                lastLogin: new Date().toISOString()
-            },
-            {
-                id: 'mod_001',
-                username: 'moderator',
-                email: 'moderator@federal-league.ru',
-                password: 'mod123',
-                role: 'moderator',
-                balance: 5000,
-                level: 35,
-                playtime: '210 ч',
-                premium: true,
-                registrationDate: new Date('2023-02-10').toISOString(),
-                lastLogin: new Date().toISOString()
-            }
-        ];
-        
-        // Добавляем демо-аккаунты если их нет
-        let updated = false;
-        demoAccounts.forEach(demoAccount => {
-            if (!users.find(u => u.username === demoAccount.username)) {
-                users.push(demoAccount);
-                updated = true;
-            }
-        });
-        
-        if (updated) {
-            localStorage.setItem('fl_users', JSON.stringify(users));
-            console.log('Демо-аккаунты инициализированы');
-        }
-        
-        return users;
-    }
-
-    // Функция аутентификации пользователя
-    async function authenticateUser(login, password) {
-        const users = initializeDemoAccounts(); // Всегда гарантируем наличие демо-аккаунтов
-        
-        // Ищем пользователя
-        const user = users.find(u => 
-            (u.username.toLowerCase() === login.toLowerCase() || 
-             u.email.toLowerCase() === login.toLowerCase()) && 
-            u.password === password
-        );
-        
-        return user;
-    }
-
-    // Обработка формы входа
-    document.getElementById('login-form').addEventListener('submit', async function(e) {
-        e.preventDefault();
-        
-        const login = document.getElementById('login-username').value;
-        const password = document.getElementById('login-password').value;
-        const remember = document.getElementById('remember-me').checked;
-        
-        if (!login || !password) {
-            showNotification('Заполните все поля', 'error');
-            return;
-        }
-        
-        const loginBtn = document.getElementById('login-btn');
-        const originalText = loginBtn.innerHTML;
-        
-        loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Вход...';
-        loginBtn.disabled = true;
-        
-        try {
-            // Аутентификация
-            const user = await authenticateUser(login, password);
+        // Функция для показа уведомлений
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = `
+                <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}"></i>
+                <span>${message}</span>
+            `;
             
-            if (user) {
-                const ip = await getIPAddress();
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 100);
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    notification.remove();
+                }, 300);
+            }, 5000);
+        }
+
+        // Заполнение демо-credentials
+        function fillDemoCredentials(email, password) {
+            document.getElementById('login-email').value = email;
+            document.getElementById('login-password').value = password;
+            document.getElementById('remember-me').checked = true;
+            showNotification(`Данные заполнены!`, 'success');
+        }
+
+        // Создание демо-аккаунтов
+        async function createDemoAccounts() {
+            const demoAccounts = [
+                { email: 'admin@federal.ru', password: 'admin123', username: 'admin', balance: 10000, level: 50, role: 'administrator' },
+                { email: 'demo@federal.ru', password: 'password', username: 'demo', balance: 1500, level: 24, role: 'player' }
+            ];
+
+            for (const account of demoAccounts) {
+                try {
+                    const userCredential = await createUserWithEmailAndPassword(auth, account.email, account.password);
+                    const user = userCredential.user;
+                    
+                    await setDoc(doc(db, "users", user.uid), {
+                        username: account.username,
+                        email: account.email,
+                        balance: account.balance,
+                        level: account.level,
+                        role: account.role,
+                        playtime: '127 ч',
+                        premium: true,
+                        registrationDate: new Date().toISOString(),
+                        lastLogin: new Date().toISOString()
+                    });
+                    
+                } catch (error) {
+                    if (error.code !== 'auth/email-already-in-use') {
+                        console.log('Демо-аккаунт уже существует или ошибка:', error);
+                    }
+                }
+            }
+        }
+
+        // Функция входа
+        async function loginUser(email, password) {
+            try {
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
                 
-                // Обновляем данные пользователя
-                user.lastLogin = new Date().toISOString();
-                user.ip = ip;
+                const userDoc = await getDoc(doc(db, "users", user.uid));
                 
-                // Сохраняем обновленные данные
-                const users = JSON.parse(localStorage.getItem('fl_users') || '[]');
-                const updatedUsers = users.map(u => u.id === user.id ? user : u);
-                localStorage.setItem('fl_users', JSON.stringify(updatedUsers));
+                if (!userDoc.exists()) {
+                    throw new Error('Данные пользователя не найдены');
+                }
+                
+                const userData = userDoc.data();
+                
+                return {
+                    uid: user.uid,
+                    email: user.email,
+                    username: userData.username,
+                    balance: userData.balance,
+                    level: userData.level,
+                    playtime: userData.playtime,
+                    premium: userData.premium,
+                    role: userData.role,
+                    registrationDate: userData.registrationDate,
+                    lastLogin: new Date().toISOString()
+                };
+                
+            } catch (error) {
+                console.error('Ошибка входа:', error);
+                throw error;
+            }
+        }
+
+        // Обработка формы входа
+        document.getElementById('login-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            const remember = document.getElementById('remember-me').checked;
+            
+            if (!email || !password) {
+                showNotification('Заполните все поля', 'error');
+                return;
+            }
+            
+            const loginBtn = document.getElementById('login-btn');
+            const originalText = loginBtn.innerHTML;
+            
+            loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Вход...';
+            loginBtn.disabled = true;
+            
+            try {
+                const user = await loginUser(email, password);
                 
                 showNotification(`Добро пожаловать, ${user.username}!`, 'success');
+                
                 localStorage.setItem('currentUser', JSON.stringify(user));
                 
                 if (remember) {
-                    localStorage.setItem('remembered_user', login);
+                    localStorage.setItem('remembered_user', email);
                 }
                 
                 setTimeout(() => {
                     window.location.href = 'account.html';
                 }, 1000);
-            } else {
-                showNotification('Неверное имя пользователя или пароль', 'error');
+                
+            } catch (error) {
+                console.error('Ошибка входа:', error);
+                
+                if (error.code === 'auth/user-not-found') {
+                    showNotification('Пользователь не найден', 'error');
+                } else if (error.code === 'auth/wrong-password') {
+                    showNotification('Неверный пароль', 'error');
+                } else if (error.code === 'auth/invalid-email') {
+                    showNotification('Неверный формат email', 'error');
+                } else {
+                    showNotification('Ошибка входа: ' + error.message, 'error');
+                }
+            } finally {
+                loginBtn.innerHTML = originalText;
+                loginBtn.disabled = false;
             }
+        });
+
+        // Переключение видимости пароля
+        document.getElementById('toggle-password').addEventListener('click', function() {
+            const input = document.getElementById('login-password');
+            const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+            input.setAttribute('type', type);
+            this.innerHTML = type === 'password' ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
+        });
+
+        // Проверка при загрузке страницы
+        document.addEventListener('DOMContentLoaded', function() {
+            createDemoAccounts();
             
-        } catch (error) {
-            console.error('Ошибка входа:', error);
-            showNotification('Ошибка аутентификации', 'error');
-        } finally {
-            loginBtn.innerHTML = originalText;
-            loginBtn.disabled = false;
-        }
-    });
+            const rememberedUser = localStorage.getItem('remembered_user');
+            if (rememberedUser) {
+                document.getElementById('login-email').value = rememberedUser;
+                document.getElementById('remember-me').checked = true;
+            }
+        });
 
-    // Переключение видимости пароля
-    document.getElementById('toggle-password').addEventListener('click', function() {
-        const input = document.getElementById('login-password');
-        const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
-        input.setAttribute('type', type);
-        this.innerHTML = type === 'password' ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
-    });
-
-    // Проверка при загрузке страницы
-    document.addEventListener('DOMContentLoaded', function() {
-        // Инициализируем демо-аккаунты
-        initializeDemoAccounts();
-        
-        // Автозаполнение логина
-        const rememberedUser = localStorage.getItem('remembered_user');
-        if (rememberedUser) {
-            document.getElementById('login-username').value = rememberedUser;
-            document.getElementById('remember-me').checked = true;
-        }
-        
-        // Сообщение о регистрации
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get('registered') === 'true') {
-            showNotification('Регистрация завершена. Теперь вы можете войти.', 'success');
-        }
-    });
-
-    // Обработка "Забыли пароль?"
-    document.getElementById('forgot-password').addEventListener('click', function(e) {
-        e.preventDefault();
-        showNotification('Функция восстановления пароля временно недоступна', 'warning');
-    });
+        // Обработка "Забыли пароль?"
+        document.getElementById('forgot-password').addEventListener('click', function(e) {
+            e.preventDefault();
+            showNotification('Функция восстановления пароля временно недоступна', 'warning');
+        });
     </script>
 </body>
 </html>
