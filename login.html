@@ -1,120 +1,248 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-
-    <link rel="icon" href="images/logo.png">
-    <meta name="description" content="Free, modern and nice web template for Minecraft server.">
-    <meta name="author" content="Astronawta">
-
-    <link rel="stylesheet" href="css/global.css">
-    <link rel="stylesheet" href="css/pages/login.css">
-
-    <title>FederalLeague | Авторизация</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход - Federal League</title>
+    <link rel="stylesheet" href="global.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <!--Navbar-->
-    <div class="navbar">
-        <div class="menu-mobile">
-            <a href="index.html">
-                <div class="logo">
-                    <img src="images/logo.png" alt="Server logo" class="logo-img">
-                    <h3 class="server-name">Federal League</h3>
+    <div class="form-container">
+        <div class="form-box">
+            <div class="form-header">
+                <img src="images/login-bg.jpg" alt="Federal League" class="form-image" onerror="this.style.display='none'">
+                <div class="form-header-overlay">
+                    <img src="images/logo.png" alt="Federal League" class="form-logo">
+                    <h2>Вход в систему</h2>
+                    <p>Federal League - Политический Minecraft сервер</p>
                 </div>
-            </a>
-
-            <div class="hamburger">
-                <i class="fa-solid fa-bars"></i>
             </div>
-        </div>
 
-        <div class="links">
-            <a href="index.html" class="link">Главная</a>
-            <a href="rules.html" class="link">Правила</a>
-            <a href="admin-team.html" class="link">Команда</a>
-            <a href="contact.html" class="link">Связь</a>
-            <a href="account.html" class="link">Личный кабинет</a>
+            <div class="form-content">
+                <div class="form-message" id="login-message">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span id="message-text"></span>
+                </div>
+
+                <form id="login-form">
+                    <div class="form-group">
+                        <label for="login-username">Имя пользователя или Email</label>
+                        <input type="text" id="login-username" name="username" required placeholder="Введите ваш логин или email">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="login-password">Пароль</label>
+                        <div class="password-input">
+                            <input type="password" id="login-password" name="password" required placeholder="Введите ваш пароль">
+                            <button type="button" class="toggle-password" id="toggle-password">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="remember-me" name="remember">
+                            <span>Запомнить меня</span>
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn-primary" id="login-btn">
+                        <i class="fas fa-sign-in-alt"></i>
+                        Войти
+                    </button>
+                </form>
+
+                <div class="form-links">
+                    <a href="index.html">
+                        <i class="fas fa-home"></i>
+                        Вернуться на главную
+                    </a>
+                    <a href="register.html">
+                        <i class="fas fa-user-plus"></i>
+                        Зарегистрироваться
+                    </a>
+                    <a href="#" id="forgot-password">
+                        <i class="fas fa-key"></i>
+                        Забыли пароль?
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!--Header with background image-->
-    <section id="login-header">
-        <div class="content">
-            <div class="header-content">
-                <h1>Добро пожаловать в Federal League</h1>
-                <p>Войдите в свой аккаунт, чтобы продолжить игру</p>
-            </div>
-        </div>
-    </section>
+    <script>
+    // Функция для показа уведомлений
+    function showNotification(message, type = 'info') {
+        const notification = document.createElement('div');
+        notification.className = `notification ${type}`;
+        notification.innerHTML = `
+            <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}"></i>
+            <span>${message}</span>
+        `;
+        
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.classList.add('show');
+        }, 100);
+        
+        setTimeout(() => {
+            notification.classList.remove('show');
+            setTimeout(() => {
+                notification.remove();
+            }, 300);
+        }, 5000);
+    }
 
-    <!--Login Section-->
-    <section id="login">
-        <div class="content">
-            <div class="login-container">
-                <div class="login-header">
-                    <img src="images/logo.png" alt="Server logo" class="login-logo">
-                    <h2>Авторизация</h2>
-                    <p>Войдите в свой аккаунт Federal League</p>
-                </div>
+    // Функция для определения IP-адреса
+    async function getIPAddress() {
+        try {
+            const response = await fetch('https://api.ipify.org?format=json');
+            const data = await response.json();
+            return data.ip;
+        } catch (error) {
+            console.error('Ошибка получения IP:', error);
+            return 'unknown';
+        }
+    }
 
-                <form class="login-form">
-                    <div class="form-group">
-                        <label for="username">Игровой никнейм</label>
-                        <input type="text" id="username" name="username" placeholder="Введите ваш никнейм" required>
-                    </div>
+	// Обработка формы входа
+	document.getElementById('login-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const login = document.getElementById('login-username').value;
+    const password = document.getElementById('login-password').value;
+    const remember = document.getElementById('remember-me').checked;
+    
+    if (!login || !password) {
+        showNotification('Заполните все поля', 'error');
+        return;
+    }
+    
+    const loginBtn = document.getElementById('login-btn');
+    const originalText = loginBtn.innerHTML;
+    
+    loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Вход...';
+    loginBtn.disabled = true;
+    
+    try {
+        // Получаем IP-адрес
+        const ip = await getIPAddress();
+        
+        // ОТПРАВЛЯЕМ ЗАПРОС НА ПРАВИЛЬНЫЙ ПУТЬ
+        const response = await fetch('api/auth.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                action: 'login',
+                username: login,
+                password: password,
+                ip: ip
+            })
+        });
+        
+        // Проверяем статус ответа
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            showNotification('Вход выполнен успешно!', 'success');
+            
+            // Сохраняем данные пользователя
+            localStorage.setItem('currentUser', JSON.stringify(result.user));
+            
+            // Запоминаем пользователя, если выбрана опция
+            if (remember) {
+                localStorage.setItem('remembered_user', login);
+            }
+            
+            // Перенаправляем в личный кабинет
+            setTimeout(() => {
+                window.location.href = 'account.html';
+            }, 1000);
+        } else {
+            showNotification(result.message, 'error');
+        }
+    } catch (error) {
+        console.error('Ошибка входа:', error);
+        showNotification('Ошибка соединения с сервером: ' + error.message, 'error');
+    } finally {
+        loginBtn.innerHTML = originalText;
+        loginBtn.disabled = false;
+    }
+});
 
-                    <div class="form-group">
-                        <label for="password">Пароль</label>
-                        <input type="password" id="password" name="password" placeholder="Введите ваш пароль" required>
-                    </div>
+// Функция для проверки доступности API
+async function checkApiAvailability() {
+    try {
+        const response = await fetch('api/auth.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ action: 'test' })
+        });
+        
+        if (response.ok) {
+            console.log('API доступен');
+            return true;
+        }
+    } catch (error) {
+        console.warn('API недоступен:', error);
+    }
+    return false;
+}
 
-                    <div class="form-options">
-                        <label class="remember-me">
-                            <input type="checkbox" name="remember">
-                            <span>Запомнить меня</span>
-                        </label>
-                        <a href="#" class="forgot-password">Забыли пароль?</a>
-                    </div>
+// Проверка при загрузке страницы
+document.addEventListener('DOMContentLoaded', function() {
+    // ... существующий код ...
+    
+    // Проверяем доступность API
+    checkApiAvailability();
+});
 
-                    <button type="submit" class="login-btn">Войти</button>
+    // Переключение видимости пароля
+    document.getElementById('toggle-password').addEventListener('click', function() {
+        const input = document.getElementById('login-password');
+        const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+        input.setAttribute('type', type);
+        this.innerHTML = type === 'password' ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
+    });
 
-                    <div class="register-link">
-                        <p>Нет аккаунта? <a href="register.html">Зарегистрироваться</a></p>
-                    </div>
-                </form>
+    // Проверка при загрузке страницы
+    document.addEventListener('DOMContentLoaded', function() {
+        const currentUser = localStorage.getItem('currentUser');
+        if (currentUser) {
+            window.location.href = 'account.html';
+            return;
+        }
+        
+        // Автозаполнение логина, если пользователь выбрал "Запомнить меня"
+        const rememberedUser = localStorage.getItem('remembered_user');
+        if (rememberedUser) {
+            document.getElementById('login-username').value = rememberedUser;
+            document.getElementById('remember-me').checked = true;
+        }
+        
+        // Показываем сообщение об успешной регистрации, если есть
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('registered') === 'true') {
+            showNotification('Регистрация завершена. Теперь вы можете войти.', 'success');
+        }
+    });
 
-                <div class="login-alternative">
-                    <div class="divider">
-                        <span>Или войдите через</span>
-                    </div>
-                    
-                    <div class="alternative-buttons">
-                        <button class="discord-login">
-                            <i class="fa-brands fa-discord"></i>
-                            Discord
-                        </button>
-                        <button class="vk-login">
-                            <i class="fa-brands fa-vk"></i>
-                            VK
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!--Footer-->
-    <footer id="footer">
-        <p class="copyright">&copy; 2025 <span class="server-name-footer">Federal League</span>. Все права завоёванны.</p>
-        <div class="social-links">
-            <a href="#" class="link tiktok-link"><i class="fa-brands fa-tiktok"></i></a>
-            <a href="#" class="link instagram-link"><i class="fa-brands fa-telegram"></i></a>
-            <a href="#" class="link discord-link-footer"><i class="fa-brands fa-discord"></i></a>
-        </div>
-    </footer>
+    // Обработка "Забыли пароль?"
+    document.getElementById('forgot-password').addEventListener('click', function(e) {
+        e.preventDefault();
+        showNotification('Функция восстановления пароля временно недоступна', 'warning');
+    });
+    </script>
 </body>
-<script src="js/script.js"></script>
-<script src="https://kit.fontawesome.com/cbf5ee59c8.js" crossorigin="anonymous"></script>
 </html>
