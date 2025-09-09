@@ -263,3 +263,23 @@ section:not(#header) .content {
     text-align: center;
   }
 }
+
+/* Стили для кнопки Личный кабинет */
+.navbar .links .link[href="account.html"] {
+    background-color: #fdbb2d;
+    color: #333 !important;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-weight: 700;
+    transition: all 0.3s ease;
+}
+
+.navbar .links .link[href="account.html"]:hover {
+    background-color: #f39c12;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(243, 156, 18, 0.3);
+}
+
+.navbar .links .link[href="account.html"].active {
+    background-color: #f39c12;
+}

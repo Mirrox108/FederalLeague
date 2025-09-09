@@ -10,342 +10,10 @@
     <meta name="author" content="Federal League">
 
     <link rel="stylesheet" href="css/global.css">
-    <link rel="stylesheet" href="css/pages/home.css">
+    <link rel="stylesheet" href="css/shop.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <title>FederalLeague | Магазин</title>
-    <style>
-        /* Shop Section */
-        #shop {
-            background: var(--background-color);
-            padding: 80px 0;
-        }
-
-        .shop-categories {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-bottom: 40px;
-            flex-wrap: wrap;
-        }
-
-        .category-btn {
-            padding: 12px 24px;
-            border: 2px solid var(--main-color);
-            background: transparent;
-            color: var(--white-color);
-            border-radius: 25px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 600;
-        }
-
-        .category-btn.active,
-        .category-btn:hover {
-            background: var(--main-color);
-            color: var(--black-color);
-        }
-
-        .shop-items {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 30px;
-            margin-top: 40px;
-        }
-
-        .shop-item {
-            background: rgba(36, 39, 43, 0.8);
-            border: 1px solid rgba(255, 169, 57, 0.3);
-            border-radius: 15px;
-            padding: 30px;
-            text-align: center;
-            position: relative;
-            transition: all 0.3s ease;
-        }
-
-        .shop-item:hover {
-            transform: translateY(-5px);
-            border-color: var(--main-color);
-            box-shadow: 0 10px 30px rgba(255, 169, 57, 0.2);
-        }
-
-        .item-badge {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: var(--main-color);
-            color: var(--black-color);
-            padding: 5px 12px;
-            border-radius: 15px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .item-icon {
-            font-size: 48px;
-            color: var(--main-color);
-            margin-bottom: 20px;
-        }
-
-        .item-title {
-            color: var(--white-color);
-            font-size: 20px;
-            margin-bottom: 10px;
-        }
-
-        .item-description {
-            color: var(--description-color);
-            margin-bottom: 20px;
-            font-size: 14px;
-        }
-
-        .item-price {
-            margin-bottom: 20px;
-        }
-
-        .price-amount {
-            color: var(--main-color);
-            font-size: 28px;
-            font-weight: 700;
-        }
-
-        .price-currency {
-            color: var(--description-color);
-            font-size: 16px;
-        }
-
-        .buy-btn {
-            width: 100%;
-            padding: 15px;
-            background: var(--main-color);
-            color: var(--black-color);
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .buy-btn:hover {
-            background: rgba(255, 169, 57, 0.9);
-            transform: translateY(-2px);
-        }
-
-        /* How to Buy Section */
-        #how-to-buy {
-            background: rgba(36, 39, 43, 0.5);
-            padding: 80px 0;
-        }
-
-        .steps {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 30px;
-            margin-top: 50px;
-        }
-
-        .step {
-            text-align: center;
-            padding: 30px;
-            background: rgba(36, 39, 43, 0.8);
-            border-radius: 15px;
-            position: relative;
-        }
-
-        .step-number {
-            position: absolute;
-            top: -15px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 30px;
-            height: 30px;
-            background: var(--main-color);
-            color: var(--black-color);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-        }
-
-        .step-icon {
-            font-size: 40px;
-            color: var(--main-color);
-            margin-bottom: 20px;
-        }
-
-        .step h3 {
-            color: var(--white-color);
-            margin-bottom: 10px;
-        }
-
-        .step p {
-            color: var(--description-color);
-        }
-
-        /* Support Section */
-        #support {
-            padding: 80px 0;
-        }
-
-        .support-options {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 30px;
-            margin-top: 50px;
-        }
-
-        .support-option {
-            text-align: center;
-            padding: 40px 30px;
-            background: rgba(36, 39, 43, 0.8);
-            border-radius: 15px;
-            border: 1px solid rgba(255, 169, 57, 0.3);
-        }
-
-        .support-icon {
-            font-size: 48px;
-            color: var(--main-color);
-            margin-bottom: 20px;
-        }
-
-        .support-option h3 {
-            color: var(--white-color);
-            margin-bottom: 10px;
-        }
-
-        .support-option p {
-            color: var(--description-color);
-            margin-bottom: 20px;
-        }
-
-        .support-link {
-            color: var(--main-color);
-            text-decoration: none;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .support-link:hover {
-            color: var(--white-color);
-        }
-
-        /* Purchase Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.8);
-        }
-
-        .modal-content {
-            background: var(--background-color);
-            margin: 5% auto;
-            padding: 30px;
-            border-radius: 15px;
-            width: 90%;
-            max-width: 500px;
-            border: 2px solid var(--main-color);
-        }
-
-        .modal-close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .modal-close:hover {
-            color: var(--white-color);
-        }
-
-        .modal-header {
-            margin-bottom: 20px;
-        }
-
-        .modal-title {
-            color: var(--white-color);
-        }
-
-        .modal-body {
-            margin-bottom: 30px;
-        }
-
-        .item-info {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .price-info, .balance-info {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-            padding: 10px;
-            background: rgba(210, 208, 208, 0.1);
-            border-radius: 8px;
-        }
-
-        .modal-footer {
-            display: flex;
-            gap: 15px;
-        }
-
-        .cancel-btn, .confirm-btn {
-            flex: 1;
-            padding: 12px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-        }
-
-        .cancel-btn {
-            background: var(--description-color);
-            color: var(--black-color);
-        }
-
-        .confirm-btn {
-            background: var(--main-color);
-            color: var(--black-color);
-        }
-
-        .cancel-btn:hover {
-            background: rgba(210, 208, 208, 0.3);
-        }
-
-        .confirm-btn:hover {
-            background: rgba(255, 169, 57, 0.9);
-        }
-
-        /* Responsive */
-        @media screen and (max-width: 768px) {
-            .shop-items {
-                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            }
-            
-            .steps {
-                grid-template-columns: 1fr;
-            }
-            
-            .support-options {
-                grid-template-columns: 1fr;
-            }
-            
-            .modal-content {
-                margin: 10% auto;
-                width: 95%;
-            }
-            
-            .modal-footer {
-                flex-direction: column;
-            }
-        }
-    </style>
 </head>
 <body>
     <!--Navbar-->
@@ -369,6 +37,10 @@
             <a href="rules.html" class="link">Правила</a>
             <a href="admin-team.html" class="link">Команда</a>
             <a href="contact.html" class="link">Поддержка</a>
+            <a href="cart.html" class="link cart-link">
+                <i class="fas fa-shopping-cart"></i>
+                <span id="cart-indicator" class="cart-indicator"></span>
+            </a>
             <a href="account.html" class="link">Личный кабинет</a>
         </div>
     </div>
@@ -415,6 +87,15 @@
                             <p><span class="stat-number">2.4K</span> игроков</p>
                         </div>
                     </div>
+                    <div class="stat">
+                        <div class="icon">
+                            <i class="fas fa-wallet"></i>
+                        </div>
+                        <div class="texts">
+                            <h5 class="stat-title">Ваш баланс</h5>
+                            <p><span class="stat-number user-balance">1000</span> FL coins</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -447,7 +128,7 @@
                         <span class="price-amount">100</span>
                         <span class="price-currency">FL Coins</span>
                     </div>
-                    <button class="buy-btn">Купить сейчас</button>
+                    <button class="buy-btn">В корзину</button>
                 </div>
 
                 <div class="shop-item" data-category="currency">
@@ -461,7 +142,7 @@
                         <span class="price-amount">450</span>
                         <span class="price-currency">FL Coins</span>
                     </div>
-                    <button class="buy-btn">Купить сейчас</button>
+                    <button class="buy-btn">В корзину</button>
                 </div>
 
                 <div class="shop-item" data-category="currency">
@@ -475,7 +156,7 @@
                         <span class="price-amount">800</span>
                         <span class="price-currency">FL Coins</span>
                     </div>
-                    <button class="buy-btn">Купить сейчас</button>
+                    <button class="buy-btn">В корзину</button>
                 </div>
 
                 <!-- Косметика -->
@@ -489,7 +170,7 @@
                         <span class="price-amount">150</span>
                         <span class="price-currency">FL Coins</span>
                     </div>
-                    <button class="buy-btn">Купить сейчас</button>
+                    <button class="buy-btn">В корзину</button>
                 </div>
 
                 <div class="shop-item" data-category="cosmetics">
@@ -502,7 +183,7 @@
                         <span class="price-amount">200</span>
                         <span class="price-currency">FL Coins</span>
                     </div>
-                    <button class="buy-btn">Купить сейчас</button>
+                    <button class="buy-btn">В корзину</button>
                 </div>
 
                 <!-- Бустеры -->
@@ -517,7 +198,7 @@
                         <span class="price-amount">300</span>
                         <span class="price-currency">FL Coins</span>
                     </div>
-                    <button class="buy-btn">Купить сейчас</button>
+                    <button class="buy-btn">В корзину</button>
                 </div>
 
                 <div class="shop-item" data-category="boosters">
@@ -530,7 +211,7 @@
                         <span class="price-amount">500</span>
                         <span class="price-currency">FL Coins</span>
                     </div>
-                    <button class="buy-btn">Купить сейчас</button>
+                    <button class="buy-btn">В корзину</button>
                 </div>
 
                 <!-- Уникальное -->
@@ -545,7 +226,7 @@
                         <span class="price-amount">1000</span>
                         <span class="price-currency">FL Coins</span>
                     </div>
-                    <button class="buy-btn">Купить сейчас</button>
+                    <button class="buy-btn">В корзину</button>
                 </div>
 
                 <div class="shop-item" data-category="unique">
@@ -558,7 +239,7 @@
                         <span class="price-amount">2000</span>
                         <span class="price-currency">FL Coins</span>
                     </div>
-                    <button class="buy-btn">Купить сейчас</button>
+                    <button class="buy-btn">В корзину</button>
                 </div>
             </div>
         </div>
@@ -756,7 +437,7 @@
                 </div>
                 <div class="balance-info">
                     <span class="balance-label">Ваш баланс:</span>
-                    <span class="balance-amount">500 FL Coins</span>
+                    <span class="balance-amount">1000 FL Coins</span>
                 </div>
             </div>
             <div class="modal-footer">
@@ -766,112 +447,7 @@
         </div>
     </div>
 
-    <script>
-        // Shop functionality
-        document.addEventListener('DOMContentLoaded', function() {
-            // Category filtering
-            const categoryBtns = document.querySelectorAll('.category-btn');
-            const shopItems = document.querySelectorAll('.shop-item');
-            
-            categoryBtns.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const category = this.dataset.category;
-                    
-                    // Update active button
-                    categoryBtns.forEach(b => b.classList.remove('active'));
-                    this.classList.add('active');
-                    
-                    // Filter items
-                    shopItems.forEach(item => {
-                        if (category === 'all' || item.dataset.category === category) {
-                            item.style.display = 'block';
-                        } else {
-                            item.style.display = 'none';
-                        }
-                    });
-                });
-            });
-            
-            // Purchase modal
-            const buyBtns = document.querySelectorAll('.buy-btn');
-            const modal = document.getElementById('purchase-modal');
-            const closeModal = document.querySelector('.modal-close');
-            const cancelBtn = document.querySelector('.cancel-btn');
-            
-            buyBtns.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const item = this.closest('.shop-item');
-                    const title = item.querySelector('.item-title').textContent;
-                    const description = item.querySelector('.item-description').textContent;
-                    const price = item.querySelector('.price-amount').textContent;
-                    const icon = item.querySelector('.item-icon').innerHTML;
-                    
-                    // Update modal content
-                    document.querySelector('.modal .item-icon').innerHTML = icon;
-                    document.querySelector('.modal .item-title').textContent = title;
-                    document.querySelector('.modal .item-description').textContent = description;
-                    document.querySelector('.modal .price-amount').textContent = price + ' FL Coins';
-                    
-                    // Show modal
-                    modal.style.display = 'block';
-                });
-            });
-            
-            // Close modal
-            function closeModalFunc() {
-                modal.style.display = 'none';
-            }
-            
-            closeModal.addEventListener('click', closeModalFunc);
-            cancelBtn.addEventListener('click', closeModalFunc);
-            
-            // Close modal when clicking outside
-            window.addEventListener('click', function(event) {
-                if (event.target === modal) {
-                    closeModalFunc();
-                }
-            });
-            
-            // Confirm purchase
-            const confirmBtn = document.querySelector('.confirm-btn');
-            confirmBtn.addEventListener('click', function() {
-                alert('Покупка успешно завершена! Предметы будут доставлены в ближайшее время.');
-                closeModalFunc();
-            });
-            
-            // Copy IP button
-            const copyIpBtn = document.querySelector('.copy-ip');
-            const ipCopied = document.querySelector('.ip-copied');
-            
-            copyIpBtn.addEventListener('click', function() {
-                navigator.clipboard.writeText('mc.federalleague.ru').then(() => {
-                    ipCopied.style.display = 'block';
-                    setTimeout(() => {
-                        ipCopied.style.display = 'none';
-                    }, 2000);
-                });
-            });
-            
-            // Accordion FAQ
-            const accordionItems = document.querySelectorAll('.accordion-item');
-            
-            accordionItems.forEach(item => {
-                const header = item.querySelector('.accordion-item-header');
-                
-                header.addEventListener('click', function() {
-                    const isActive = item.classList.contains('active');
-                    
-                    // Close all items
-                    accordionItems.forEach(i => i.classList.remove('active'));
-                    
-                    // Open clicked item if it was closed
-                    if (!isActive) {
-                        item.classList.add('active');
-                    }
-                });
-            });
-        });
-    </script>
+    <script src="js/shop.js"></script>
     <script src="https://kit.fontawesome.com/cbf5ee59c8.js" crossorigin="anonymous"></script>
 </body>
 </html>

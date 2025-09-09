@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Корзина | Federal League</title>
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/shop.css">
+    <style>
+        .cart-container {
+            max-width: 1000px;
+            margin: 80px auto;
+            padding: 20px;
+        }
+        
+        .cart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .cart-items {
+            margin-bottom: 30px;
+        }
+        
+        .cart-item {
+            display: flex;
+            align-items: center;
+            background: rgba(36, 39, 43, 0.8);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .cart-item-icon {
+            font-size: 36px;
+            color: var(--main-color);
+            margin-right: 15px;
+        }
+        
+        .cart-item-details {
+            flex-grow: 1;
+        }
+        
+        .cart-item-title {
+            color: var(--white-color);
+            margin-bottom: 5px;
+        }
+        
+        .cart-item-price {
+            color: var(--main-color);
+            font-weight: bold;
+        }
+        
+        .cart-item-quantity {
+            display: flex;
+            align-items: center;
+            margin: 0 15px;
+        }
+        
+        .quantity-btn {
+            background: var(--main-color);
+            color: var(--black-color);
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .quantity-value {
+            margin: 0 10px;
+            color: var(--white-color);
+        }
+        
+        .cart-item-remove {
+            background: transparent;
+            border: none;
+            color: #ff4757;
+            cursor: pointer;
+            font-size: 18px;
+        }
+        
+        .cart-summary {
+            background: rgba(36, 39, 43, 0.8);
+            border-radius: 10px;
+            padding: 20px;
+        }
+        
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        
+        .summary-total {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--main-color);
+            border-top: 1px solid rgba(255, 169, 57, 0.3);
+            padding-top: 10px;
+            margin-top: 10px;
+        }
+        
+        .checkout-btn {
+            width: 100%;
+            padding: 15px;
+            background: var(--main-color);
+            color: var(--black-color);
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .checkout-btn:hover:not(:disabled) {
+            background: rgba(255, 169, 57, 0.9);
+        }
+        
+        .checkout-btn:disabled {
+            background: var(--description-color);
+            cursor: not-allowed;
+        }
+        
+        .empty-cart {
+            text-align: center;
+            padding: 40px;
+            color: var(--description-color);
+        }
+        
+        .continue-shopping {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: var(--main-color);
+            color: var(--black-color);
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <!--Navbar-->
+    <div class="navbar">
+        <div class="menu-mobile">
+            <a href="index.html">
+                <div class="logo">
+                    <img src="images/logo.png" alt="Server logo" class="logo-img">
+                    <h3 class="server-name">Federal League</h3>
+                </div>
+            </a>
+
+            <div class="hamburger">
+                <i class="fa-solid fa-bars"></i>
+            </div>
+        </div>
+
+        <div class="links">
+            <a href="index.html" class="link">Главная</a>
+            <a href="shop.html" class="link">Магазин</a>
+            <a href="rules.html" class="link">Правила</a>
+            <a href="admin-team.html" class="link">Команда</a>
+            <a href="contact.html" class="link">Поддержка</a>
+            <a href="#" class="link cart-link active">
+                <i class="fas fa-shopping-cart"></i>
+                <span id="cart-indicator" class="cart-indicator"></span>
+            </a>
+            <a href="account.html" class="link">Личный кабинет</a>
+        </div>
+    </div>
+
+    <div class="cart-container">
+        <div class="cart-header">
+            <h2>Корзина покупок</h2>
+            <span class="user-balance">Баланс: <span id="balance-amount">1000</span> FL Coins</span>
+        </div>
+        
+        <div id="cart-items" class="cart-items">
+            <!-- Товары будут добавляться через JavaScript -->
+        </div>
+        
+        <div id="cart-summary" class="cart-summary">
+            <!-- Сводка будет добавляться через JavaScript -->
+        </div>
+        
+        <div id="empty-cart" class="empty-cart" style="display: none;">
+            <i class="fas fa-shopping-cart" style="font-size: 48px; margin-bottom: 20px;"></i>
+            <h3>Ваша корзина пуста</h3>
+            <p>Перейдите в магазин, чтобы добавить товары</p>
+            <a href="shop.html" class="continue-shopping">Перейти в магазин</a>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const userData = JSON.parse(localStorage.getItem('userData')) || { balance: 1000, cart: [] };
+            const cartItems = document.getElementById('cart-items');
+            const cartSummary = document.getElementById('cart-summary');
+            const emptyCart = document.getElementById('empty-cart');
+            const balanceAmount = document.getElementById('balance-amount');
+            const cartIndicator = document.getElementById('cart-indicator');
+            
+            // Update balance display
+            balanceAmount.textContent = userData.balance;
+            
+            // Update cart indicator
+            if (cartIndicator) {
+                cartIndicator.textContent = userData.cart.length;
+                cartIndicator.style.display = userData.cart.length > 0 ? 'flex' : 'none';
+            }
+            
+            // Render cart items
+            function renderCart() {
+                cartItems.innerHTML = '';
+                
+                if (userData.cart.length === 0) {
+                    emptyCart.style.display = 'block';
+                    cartSummary.style.display = 'none';
+                    return;
+                }
+                
+                emptyCart.style.display = 'none';
+                cartSummary.style.display = 'block';
+                
+                userData.cart.forEach((item, index) => {
+                    const cartItem = document.createElement('div');
+                    cartItem.className = 'cart-item';
+                    cartItem.innerHTML = `
+                        <div class="cart-item-icon">${item.icon}</div>
+                        <div class="cart-item-details">
+                            <h3 class="cart-item-title">${item.title}</h3>
+                            <div class="cart-item-price">${item.price} FL Coins</div>
+                        </div>
+                        <div class="cart-item-quantity">
+                            <button class="quantity-btn" data-action="decrease" data-index="${index}">-</button>
+                            <span class="quantity-value">${item.quantity}</span>
+                            <button class="quantity-btn" data-action="increase" data-index="${index}">+</button>
+                        </div>
+                        <button class="cart-item-remove" data-index="${index}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    `;
+                    cartItems.appendChild(cartItem);
+                });
+                
+                // Add event listeners
+                document.querySelectorAll('.quantity-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const action = this.dataset.action;
+                        const index = parseInt(this.dataset.index);
+                        
+                        if (action === 'increase') {
+                            userData.cart[index].quantity += 1;
+                        } else if (action === 'decrease') {
+                            if (userData.cart[index].quantity > 1) {
+                                userData.cart[index].quantity -= 1;
+                            } else {
+                                userData.cart.splice(index, 1);
+                            }
+                        }
+                        
+                        localStorage.setItem('userData', JSON.stringify(userData));
+                        renderCart();
+                        renderSummary();
+                        updateCartIndicator();
+                    });
+                });
+                
+                document.querySelectorAll('.cart-item-remove').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const index = parseInt(this.dataset.index);
+                        userData.cart.splice(index, 1);
+                        localStorage.setItem('userData', JSON.stringify(userData));
+                        renderCart();
+                        renderSummary();
+                        updateCartIndicator();
+                    });
+                });
+            }
+            
+            // Render summary
+            function renderSummary() {
+                const total = userData.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+                const canAfford = userData.balance >= total;
+                
+                cartSummary.innerHTML = `
+                    <div class="summary-row">
+                        <span>Товары (${userData.cart.reduce((sum, item) => sum + item.quantity, 0)})</span>
+                        <span>${total} FL Coins</span>
+                    </div>
+                    <div class="summary-total">
+                        <span>Итого:</span>
+                        <span>${total} FL Coins</span>
+                    </div>
+                    <button id="checkout-btn" class="checkout-btn" ${canAfford ? '' : 'disabled'}>
+                        ${canAfford ? 'Оформить заказ' : 'Недостаточно средств'}
+                    </button>
+                `;
+                
+                if (canAfford) {
+                    document.getElementById('checkout-btn').addEventListener('click', function() {
+                        // Process checkout
+                        const total = userData.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+                        userData.balance -= total;
+                        
+                        userData.cart.forEach(item => {
+                            userData.purchases.push({
+                                title: item.title,
+                                price: item.price,
+                                quantity: item.quantity,
+                                date: new Date().toISOString()
+                            });
+                        });
+                        
+                        userData.cart = [];
+                        localStorage.setItem('userData', JSON.stringify(userData));
+                        
+                        alert('Заказ успешно оформлен! Товары будут доставлены в ближайшее время.');
+                        renderCart();
+                        renderSummary();
+                        balanceAmount.textContent = userData.balance;
+                        updateCartIndicator();
+                    });
+                }
+            }
+            
+            // Update cart indicator
+            function updateCartIndicator() {
+                if (cartIndicator) {
+                    cartIndicator.textContent = userData.cart.length;
+                    cartIndicator.style.display = userData.cart.length > 0 ? 'flex' : 'none';
+                }
+            }
+            
+            // Initialize
+            renderCart();
+            renderSummary();
+        });
+    </script>
+</body>
+</html>

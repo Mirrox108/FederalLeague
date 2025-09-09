@@ -42,29 +42,27 @@
         }
 
         .loading-logo {
-            margin-bottom: 40px;
+            margin-bottom: 15px;
             position: relative;
         }
 
         .loading-logo img {
             width: 120px;
             height: 120px;
-            border-radius: 20px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            border: 3px solid #fdbb2d;
+			background: transparent;
         }
 
         .loading-spinner {
-            position: absolute;
-            top: -10px;
-            left: -10px;
-            right: -10px;
-            bottom: -10px;
-            border: 3px solid rgba(253, 187, 45, 0.2);
-            border-top: 3px solid #fdbb2d;
-            border-radius: 50%;
-            animation: spin 1.5s linear infinite;
-        }
+			width: 30px;       /* Еще меньше */
+			height: 30px;      /* Еще меньше */
+			margin: 30px auto 0; /* Больше отступ сверху - 30px */
+			border: 2px solid rgba(253, 187, 45, 0.2); /* Тоньше граница */
+			border-top: 2px solid #fdbb2d; /* Тоньше граница */
+			border-radius: 50%;
+			animation: spin 1.5s linear infinite;
+			background: transparent;
+		}
 
         .loading-progress {
             margin-bottom: 30px;
@@ -734,38 +732,6 @@
         </div>
     </section>
 
-    <!-- Секция игроков онлайн -->
-    <section class="online-players-section">
-        <div class="online-players-container">
-            <div class="online-players-header">
-                <h2>Игроки онлайн</h2>
-                <p>Присоединяйтесь к нашему сообществу</p>
-            </div>
-            
-            <div class="online-players-grid" id="online-players-grid">
-                <div class="players-loading">
-                    <i class="fas fa-spinner"></i>
-                    <p>Загрузка списка игроков...</p>
-                </div>
-            </div>
-            
-            <div class="players-stats">
-                <div class="stat-item">
-                    <span class="stat-number" id="total-players">0</span>
-                    <span class="stat-label">Всего игроков</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-number" id="online-now">0</span>
-                    <span class="stat-label">Сейчас онлайн</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-number" id="max-online">0</span>
-                    <span class="stat-label">Максимум онлайн</span>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <!--About us-->
     <section id="about">
         <div class="content">
@@ -796,45 +762,6 @@
             
             <div class="news-actions">
                 <a href="#news" class="view-all-news" onclick="loadAllNews()">Смотреть все новости</a>
-            </div>
-        </div>
-    </section>
-
-    <!--Mini games-->
-    <section id="minigames">
-        <div class="content miniGames-list">
-            <div class="game">
-                <img src="images/survival-minigames-image.jpg" alt="Survival image">
-
-                <div class="info">
-                    <h2 class="section-title">Система войн</h2>
-                    <div class="game-description">
-                        <p>Участвуйте в эпических сражениях между государствами. Захватывайте территории, формируйте альянсы и доминируйте на политической карте сервера.</p>
-                        <ul class="services">
-                            <li class="service">Система осад</li>
-                            <li class="service">Военные союзы</li>
-                            <li class="service">Захват территорий</li>
-                            <li class="service">Дипломатия</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <div class="game">
-                <img src="images/survival-minigames-image.jpg" alt="Survival image">
-
-                <div class="info">
-                    <h2 class="section-title">Политическая система</h2>
-                    <div class="game-description">
-                        <p>Создавайте законы, формируйте правительство, участвуйте в выборах и управляйте своим государством с помощью сложной политической системы.</p>
-                        <ul class="services">
-                            <li class="service">Законодательство</li>
-                            <li class="service">Выборы</li>
-                            <li class="service">Налоговая система</li>
-                            <li class="service">Государственные должности</li>
-                        </ul>
-                    </div>
-                </div>
             </div>
         </div>
     </section>
