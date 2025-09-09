@@ -8,7 +8,7 @@ const config = {
     serverInfo: {
         serverLogoImageFileName: "logo.png", /*This is a file name for logo in /images/ (If you upload new logo with other name, you must change this value)*/
         serverName: "Federal League", /*Server name*/
-        serverIp: "45.11.231.92:30038", /*Server IP (if you want to add online user counter, you must have true the enable-status and enable-query of server.properties)*/
+        serverIp: "45.67.84.2:30135", /*Server IP (if you want to add online user counter, you must have true the enable-status and enable-query of server.properties)*/
         discordServerID: "1315262166458171465" /*Your server ID (if you want to add online user counter, you must have enabled Discord server widget)*/
     },
 
@@ -704,4 +704,5 @@ document.addEventListener('DOMContentLoaded', function() {
             navbar.appendChild(adminLink);
         }
     }
+
 });
