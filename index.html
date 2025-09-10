@@ -50,19 +50,19 @@
             width: 120px;
             height: 120px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-			background: transparent;
+            background: transparent;
         }
 
         .loading-spinner {
-			width: 30px;       /* Еще меньше */
-			height: 30px;      /* Еще меньше */
-			margin: 30px auto 0; /* Больше отступ сверху - 30px */
-			border: 2px solid rgba(253, 187, 45, 0.2); /* Тоньше граница */
-			border-top: 2px solid #fdbb2d; /* Тоньше граница */
-			border-radius: 50%;
-			animation: spin 1.5s linear infinite;
-			background: transparent;
-		}
+            width: 30px;
+            height: 30px;
+            margin: 30px auto 0;
+            border: 2px solid rgba(253, 187, 45, 0.2);
+            border-top: 2px solid #fdbb2d;
+            border-radius: 50%;
+            animation: spin 1.5s linear infinite;
+            background: transparent;
+        }
 
         .loading-progress {
             margin-bottom: 30px;
@@ -348,6 +348,7 @@
         }
         
         .news-image {
+            position: relative;
             width: 100%;
             height: 200px;
             overflow: hidden;
@@ -364,27 +365,37 @@
             transform: scale(1.05);
         }
         
-        .news-content {
-            padding: 20px;
+        /* Стили для даты поверх изображения */
+        .news-date-overlay {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: linear-gradient(135deg, #fdbb2d 0%, #f39c12 100%);
+            color: #333;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            min-width: 50px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            z-index: 2;
         }
         
-        .news-date {
-            display: flex;
-            align-items: center;
-            margin-bottom: 12px;
-            color: #fdbb2d;
-            font-size: 0.9rem;
-        }
-        
-        .news-date .day {
+        .news-day {
             font-size: 1.8rem;
             font-weight: bold;
-            margin-right: 8px;
+            line-height: 1;
+            display: block;
         }
         
-        .news-date .month {
+        .news-month {
+            font-size: 0.9rem;
             text-transform: uppercase;
             font-weight: 600;
+            display: block;
+        }
+        
+        .news-content {
+            padding: 20px;
         }
         
         .news-title {
@@ -446,6 +457,31 @@
             color: #333;
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(253, 187, 45, 0.3);
+        }
+        
+        /* Стили для загрузки и сообщений */
+        .news-loading {
+            text-align: center;
+            padding: 60px 20px;
+            grid-column: 1 / -1;
+        }
+        
+        .news-loading i {
+            font-size: 2.5rem;
+            color: #fdbb2d;
+            margin-bottom: 20px;
+            animation: spin 1s linear infinite;
+        }
+        
+        .news-loading p {
+            color: #fff;
+            font-size: 1.1rem;
+        }
+        
+        .no-news {
+            text-align: center;
+            padding: 60px 20px;
+            grid-column: 1 / -1;
         }
         
         /* Модальное окно */
@@ -632,6 +668,22 @@
             .tip-item {
                 font-size: 0.8rem;
             }
+            
+            /* Адаптивность для даты на новостях */
+            .news-date-overlay {
+                top: 10px;
+                left: 10px;
+                padding: 8px;
+                min-width: 40px;
+            }
+            
+            .news-day {
+                font-size: 1.5rem;
+            }
+            
+            .news-month {
+                font-size: 0.8rem;
+            }
         }
     </style>
 </head>
@@ -762,6 +814,45 @@
             
             <div class="news-actions">
                 <a href="#news" class="view-all-news" onclick="loadAllNews()">Смотреть все новости</a>
+            </div>
+        </div>
+    </section>
+
+    <!--Mini games-->
+    <section id="minigames">
+        <div class="content miniGames-list">
+            <div class="game">
+                <img src="images/survival-minigames-image.jpg" alt="Survival image">
+
+                <div class="info">
+                    <h2 class="section-title">Система войн</h2>
+                    <div class="game-description">
+                        <p>Участвуйте в эпических сражениях между государствами. Захватывайте территории, формируйте альянсы и доминируйте на политической карте сервера.</p>
+                        <ul class="services">
+                            <li class="service">Система осад</li>
+                            <li class="service">Военные союзы</li>
+                            <li class="service">Захват территорий</li>
+                            <li class="service">Дипломатия</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="game">
+                <img src="images/survival-minigames-image.jpg" alt="Survival image">
+
+                <div class="info">
+                    <h2 class="section-title">Политическая система</h2>
+                    <div class="game-description">
+                        <p>Создавайте законы, формируйте правительство, участвуйте в выборах и управляйте своим государством с помощью сложной политической системы.</p>
+                        <ul class="services">
+                            <li class="service">Законодательство</li>
+                            <li class="service">Выборы</li>
+                            <li class="service">Налоговая система</li>
+                            <li class="service">Государственные должности</li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -991,7 +1082,7 @@ async function loadOnlinePlayers() {
     `;
     
     try {
-        // Запрос к API для получения данных об игроках
+        // Запрос к API для получения данных об игрокаи
         const response = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.PLAYERS}`, {
             method: 'GET',
             headers: {
@@ -1054,7 +1145,7 @@ async function loadOnlinePlayers() {
     }
 }
 
-// Функция для загрузки новостей
+// Функция для загрузки новостей из JSON файла
 async function loadNews() {
     const newsContainer = document.getElementById('news-container');
     if (!newsContainer) return;
@@ -1068,27 +1159,148 @@ async function loadNews() {
     `;
 
     try {
-        // Сначала пытаемся загрузить новости из localStorage
-        const localNews = JSON.parse(localStorage.getItem('fl_news') || '[]');
-        const publishedNews = localNews.filter(news => news.status === 'published');
+        // Пытаемся загрузить новости из JSON файла
+        console.log('Попытка загрузки новостей из news.json...');
+        const response = await fetch('news.json', {
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            cache: 'no-cache'
+        });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        console.log('Новости успешно загружены из файла:', data);
         
         // Очищаем контейнер
         newsContainer.innerHTML = '';
         
         // Добавляем новости
-        if (publishedNews.length > 0) {
-            publishedNews.slice(0, 3).forEach(item => {
-                addNewsItem(newsContainer, item);
-            });
+        if (data.news && data.news.length > 0) {
+            const publishedNews = data.news.filter(news => news.status === 'published');
+            
+            if (publishedNews.length > 0) {
+                // Сортируем новости по дате (новые сначала)
+                publishedNews.sort((a, b) => new Date(b.date) - new Date(a.date));
+                
+                // Показываем только последние 3 новости на главной
+                publishedNews.slice(0, 3).forEach(item => {
+                    addNewsItem(newsContainer, item);
+                });
+                
+                // Сохраняем все новости в localStorage для быстрого доступа
+                localStorage.setItem('fl_news', JSON.stringify(publishedNews));
+                console.log('Новости сохранены в localStorage');
+            } else {
+                console.log('Нет опубликованных новостей');
+                showNoNewsMessage(newsContainer);
+            }
         } else {
-            // Если новостей нет, показываем демо-новости
-            showDemoNews(newsContainer);
+            console.log('Нет новостей в файле');
+            showNoNewsMessage(newsContainer);
         }
     } catch (error) {
-        console.error('Ошибка при загрузке новостей:', error);
-        // Показываем демо-новости при ошибке
-        showDemoNews(newsContainer);
+        console.error('Ошибка при загрузке новостей из файла:', error);
+        
+        // Пытаемся загрузить новости из localStorage
+        try {
+            const localNews = JSON.parse(localStorage.getItem('fl_news') || '[]');
+            console.log('Попытка загрузки из localStorage:', localNews);
+            
+            if (localNews.length > 0) {
+                newsContainer.innerHTML = '';
+                localNews.slice(0, 3).forEach(item => {
+                    addNewsItem(newsContainer, item);
+                });
+                console.log('Новости загружены из localStorage');
+            } else {
+                // Если в localStorage тоже нет новостей, показываем демо-новости
+                console.log('Загрузка демо-новостей');
+                showDemoNews(newsContainer);
+            }
+        } catch (localError) {
+            console.error('Ошибка при загрузке из localStorage:', localError);
+            showDemoNews(newsContainer);
+        }
     }
+}
+
+// Функция для показа демо-новостей
+function showDemoNews(container) {
+    console.log('Показ демо-новостей');
+    const demoNews = [
+        {
+            id: 1,
+            title: "Запуск нового сезона!",
+            date: new Date().toISOString(),
+            image: "images/news1.jpg",
+            excerpt: "Мы рады объявить о начале нового сезона на нашем сервере. Много новых возможностей и улучшений ждут вас!",
+            content: `<p>Мы рады объявить о начале нового сезона на нашем сервере Federal League! Этот сезон принесет много новых возможностей и улучшений:</p>
+                     <ul>
+                         <li>Обновленная политическая система</li>
+                         <li>Новые механики войны между государствами</li>
+                         <li>Улучшенная экономическая система</li>
+                         <li>Исправление множества багов и оптимизация производительности</li>
+                     </ul>
+                     <p>Присоединяйтесь к нам и станьте частью истории нашего сервера!</p>`,
+            status: "published"
+        },
+        {
+            id: 2,
+            title: "Конкурс на лучший город",
+            date: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+            image: "images/news2.jpg",
+            excerpt: "Объявляем конкурс на самый красивый и функциональный город. Ценные призы победителям!",
+            content: `<p>Объявляем конкурс на самый красивый и функциональный город на нашем сервере! Условия участия:</p>
+                     <ul>
+                         <li>Город должен быть основан не позднее чем за неделю до окончания конкурса</li>
+                         <li>Минимальное количество жителей - 5 человек</li>
+                         <li>Город должен иметь уникальный дизайн и инфраструктуру</li>
+                     </ul>
+                     <p>Главный приз: 5000 FL Coins и уникальный титул «Архитектор сезона»!</p>`,
+            status: "published"
+        },
+        {
+            id: 3,
+            title: "Обновление системы сражений",
+            date: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
+            image: "images/news3.jpg",
+            excerpt: "Мы полностью переработали систему войн и сражений между государствами. Теперь битвы стали еще эпичнее!",
+            content: `<p>Мы полностью переработали систему войн и сражений между государствами. Основные изменения:</p>
+                     <ul>
+                         <li>Новая система осад замков и крепостей</li>
+                         <li>Улучшенный баланс между нападающими и защитниками</li>
+                         <li>Добавлены новые виды осадных орудий</li>
+                         <li>Введена система военных рангов и званий</li>
+                     </ul>
+                     <p>Теперь битвы стали еще эпичнее и стратегически интереснее!</p>`,
+            status: "published"
+        }
+    ];
+    
+    container.innerHTML = '';
+    
+    demoNews.forEach(item => {
+        addNewsItem(container, item);
+    });
+    
+    // Сохраняем демо-новости в localStorage
+    localStorage.setItem('fl_news', JSON.stringify(demoNews));
+}
+
+// Функция для показа сообщения об отсутствии новостей
+function showNoNewsMessage(container) {
+    container.innerHTML = `
+        <div class="no-news">
+            <i class="fas fa-newspaper" style="font-size: 3rem; color: #fdbb2d; margin-bottom: 20px;"></i>
+            <p style="color: #fff; font-size: 1.2rem;">Новостей пока нет</p>
+            <p style="color: #ccc;">Следите за обновлениями!</p>
+        </div>
+    `;
 }
 
 // Функция для добавления элемента новости
@@ -1096,19 +1308,19 @@ function addNewsItem(container, item) {
     const newsItem = document.createElement('div');
     newsItem.className = 'news-item';
     
-    const newsDate = new Date(item.date || item.timestamp);
+    const newsDate = new Date(item.date);
     const day = newsDate.getDate();
     const month = newsDate.toLocaleString('ru-RU', { month: 'short' });
     
     newsItem.innerHTML = `
         <div class="news-image">
-            <img src="${item.image || 'images/news-placeholder.jpg'}" alt="${item.title || 'Новость'}">
+            <img src="${item.image || 'images/news-placeholder.jpg'}" alt="${item.title || 'Новость'}" onerror="this.src='images/news-placeholder.jpg'">
+            <div class="news-date-overlay">
+                <span class="news-day">${day}</span>
+                <span class="news-month">${month}</span>
+            </div>
         </div>
         <div class="news-content">
-            <div class="news-date">
-                <span class="day">${day}</span>
-                <span class="month">${month}</span>
-            </div>
             <h3 class="news-title">${item.title || 'Без названия'}</h3>
             <p class="news-excerpt">${item.excerpt || 'Описание отсутствует'}</p>
             <button class="news-read-btn" onclick="openNewsModal(this.parentNode.parentNode)">
@@ -1124,63 +1336,100 @@ function addNewsItem(container, item) {
     container.appendChild(newsItem);
 }
 
-// Функция для показа демо-новостей
-function showDemoNews(container) {
-    const demoNews = [
-        {
-            title: "Запуск нового сезона!",
-            date: new Date(),
-            image: "images/news1.jpg",
-            excerpt: "Мы рады объявить о начале нового сезона на нашем сервере. Много новых возможностей и улучшений ждут вас!",
-            content: `<p>Мы рады объявить о начале нового сезона на нашем сервере Federal League! Этот сезон принесет много новых возможностей и улучшений:</p>
-                     <ul>
-                         <li>Обновленная политическая система</li>
-                         <li>Новые механики войны между государствами</li>
-                         <li>Улучшенная экономическая система</li>
-                         <li>Исправление множества багов и оптимизация производительности</li>
-                     </ul>
-                     <p>Присоединяйтесь к нам и станьте частью истории нашего сервера!</p>`
-        },
-        {
-            title: "Конкурс на лучший город",
-            date: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
-            image: "images/news2.jpg",
-            excerpt: "Объявляем конкурс на самый красивый и функциональный город. Ценные призы победителям!",
-            content: `<p>Объявляем конкурс на самый красивый и функциональный город на нашем сервере! Условия участия:</p>
-                     <ul>
-                         <li>Город должен быть основан не позднее чем за неделю до окончания конкурса</li>
-                         <li>Минимальное количество жителей - 5 человек</li>
-                         <li>Город должен иметь уникальный дизайн и инфраструктуру</li>
-                     </ul>
-                     <p>Главный приз: 5000 FL Coins и уникальный титул «Архитектор сезона»!</p>`
-        },
-        {
-            title: "Обновление системы сражений",
-            date: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000),
-            image: "images/news3.jpg",
-            excerpt: "Мы полностью переработали систему войн и сражений между государствами. Теперь битвы стали еще эпичнее!",
-            content: `<p>Мы полностью переработали систему войн и сражений между государствами. Основные изменения:</p>
-                     <ul>
-                         <li>Новая система осад замков и крепостей</li>
-                         <li>Улучшенный баланс между нападающими и защитниками</li>
-                         <li>Добавлены новые виды осадных орудий</li>
-                         <li>Введена система военных рангов и званий</li>
-                     </ul>
-                     <p>Теперь битвы стали еще эпичнее и стратегически интереснее!</p>`
+// Функция для загрузки всех новостей
+async function loadAllNews() {
+    try {
+        const newsContainer = document.getElementById('news-container');
+        if (!newsContainer) return;
+        
+        // Показываем индикатор загрузки
+        newsContainer.innerHTML = `
+            <div class="news-loading">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p>Загрузка всех новостей...</p>
+            </div>
+        `;
+        
+        let newsData = [];
+        
+        // Пытаемся загрузить из файла
+        try {
+            const response = await fetch('news.json');
+            if (response.ok) {
+                const data = await response.json();
+                newsData = data.news || [];
+            } else {
+                throw new Error('File not found');
+            }
+        } catch (error) {
+            // Если файл не доступен, загружаем из localStorage
+            console.log('Загрузка из localStorage...');
+            const localNews = JSON.parse(localStorage.getItem('fl_news') || '[]');
+            newsData = localNews;
         }
-    ];
-    
-    container.innerHTML = '';
-    
-    demoNews.forEach(item => {
-        addNewsItem(container, item);
-    });
+        
+        // Очищаем контейнер
+        newsContainer.innerHTML = '';
+        
+        // Добавляем все новости
+        if (newsData.length > 0) {
+            const publishedNews = newsData.filter(news => !news.status || news.status === 'published');
+            
+            if (publishedNews.length > 0) {
+                // Сортируем новости по дате (новые сначала)
+                publishedNews.sort((a, b) => new Date(b.date) - new Date(a.date));
+                
+                publishedNews.forEach(item => {
+                    addNewsItem(newsContainer, item);
+                });
+            } else {
+                showNoNewsMessage(newsContainer);
+            }
+        } else {
+            // Если новостей нет, показываем демо-новости
+            showDemoNews(newsContainer);
+        }
+        
+        // Скрываем кнопку "Смотреть все новости"
+        const viewAllButton = document.querySelector('.view-all-news');
+        if (viewAllButton) {
+            viewAllButton.style.display = 'none';
+        }
+        
+    } catch (error) {
+        console.error('Ошибка при загрузке всех новостей:', error);
+        // Показываем демо-новости при ошибке
+        showDemoNews(document.getElementById('news-container'));
+    }
 }
 
-// Функция для загрузки всех новостей
-function loadAllNews() {
-    // В реальном приложении здесь будет переход на страницу со всеми новостями
-    alert('Функция "Смотреть все новости" будет реализована в будущем обновлении');
+// Функция для открытия модального окна с новостью
+function openNewsModal(newsItem) {
+    const modal = document.getElementById('news-modal');
+    const modalTitle = modal.querySelector('.modal-title');
+    const modalImage = modal.querySelector('.modal-image img');
+    const modalText = modal.querySelector('.modal-text');
+    const modalDate = modal.querySelector('.modal-date');
+    
+    // Получаем данные из новости
+    const title = newsItem.querySelector('.news-title').textContent;
+    const image = newsItem.querySelector('.news-image img').src;
+    const content = newsItem.querySelector('.news-full-content').innerHTML;
+    
+    // Получаем дату из overlay
+    const dateOverlay = newsItem.querySelector('.news-date-overlay');
+    const day = dateOverlay.querySelector('.news-day').textContent;
+    const month = dateOverlay.querySelector('.news-month').textContent;
+    
+    // Заполняем модальное окно
+    modalTitle.textContent = title;
+    modalImage.src = image;
+    modalText.innerHTML = content;
+    modalDate.querySelector('.modal-day').textContent = day;
+    modalDate.querySelector('.modal-month').textContent = month;
+    
+    // Показываем модальное окно
+    modal.style.display = 'block';
 }
 
 // Функция для обновления счетчиков в хедере
@@ -1235,47 +1484,26 @@ async function loadServerStats() {
     }
 }
 
-// Альтернативная версия для Minecraft Query API
-async function loadOnlinePlayersViaQuery() {
-    try {
-        // Пример для использования Minecraft Query API
-        const response = await fetch('/api/minecraft-query?host=45.67.84.2&port=30136');
-        
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+// Закрытие модального окна
+document.addEventListener('DOMContentLoaded', function() {
+    const modal = document.getElementById('news-modal');
+    const closeBtn = modal.querySelector('.modal-close');
+    const closeBtn2 = modal.querySelector('.modal-close-btn');
+    
+    closeBtn.addEventListener('click', function() {
+        modal.style.display = 'none';
+    });
+    
+    closeBtn2.addEventListener('click', function() {
+        modal.style.display = 'none';
+    });
+    
+    window.addEventListener('click', function(event) {
+        if (event.target === modal) {
+            modal.style.display = 'none';
         }
-        
-        const data = await response.json();
-        
-        if (data.online) {
-            document.getElementById('online-now').textContent = data.players.online;
-            
-            // Формируем список игроков
-            if (data.players.list && data.players.list.length > 0) {
-                const playersGrid = document.getElementById('online-players-grid');
-                playersGrid.innerHTML = '';
-                
-                data.players.list.forEach(player => {
-                    const playerCard = document.createElement('div');
-                    playerCard.className = 'player-card';
-                    playerCard.innerHTML = `
-                        <div class="player-avatar">
-                            <div class="avatar-placeholder">
-                                <i class="fas fa-user"></i>
-                            </div>
-                        </div>
-                        <h3 class="player-name">${player}</h3>
-                        <span class="player-rank">Игрок</span>
-                        <p class="player-playtime">В сети</p>
-                    `;
-                    playersGrid.appendChild(playerCard);
-                });
-            }
-        }
-    } catch (error) {
-        console.error('Ошибка при запросе статуса сервера:', error);
-    }
-}
+    });
+});
 
 // Загружаем данные при загрузке страницы
 document.addEventListener('DOMContentLoaded', function() {
