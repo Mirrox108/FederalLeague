@@ -573,6 +573,8 @@
         
         .modal-body {
             padding: 25px;
+            max-height: 60vh;
+            overflow-y: auto;
         }
         
         .modal-image {
@@ -595,6 +597,15 @@
         
         .modal-text p {
             margin-bottom: 15px;
+        }
+        
+        .modal-text ul, .modal-text ol {
+            margin-bottom: 15px;
+            padding-left: 20px;
+        }
+        
+        .modal-text li {
+            margin-bottom: 5px;
         }
         
         .modal-footer {
@@ -734,6 +745,7 @@
             <a href="admin-team.html" class="link">Команда</a>
             <a href="contact.html" class="link">Связь</a>
             <a href="account.html" class="link">Личный кабинет</a>
+            <a href="admin.html" class="link">Админ-панель</a>
         </div>
     </div>
 
@@ -924,7 +936,7 @@
                     </div>
                     <div class="accordion-item-body">
                         <div class="accordion-item-body-content">
-                            Мы не восстанавливаем потерянные вещи, если это не связано с багом сервера. Рекомендуем использовать эндерсундуки для хранения ценных предметов и быть осторожным в опасных зонах.
+                            Мы не восстанавливаем потерянные вещи, если это не связано с багом сервера. Рекомендуем использовать эндерсундуки для хранения ценных предметов и быть осторожным в опасных зонас.
                         </div>
                     </div>
                 </div>
@@ -975,559 +987,296 @@
             </div>
         </div>
     </div>
-</body>
-<script src="js/script.js"></script>
-<script src="js/modals.js"></script>
-<script src="https://kit.fontawesome.com/cbf5ee59c8.js" crossorigin="anonymous"></script>
 
-<script>
-// Конфигурация API
-const API_CONFIG = {
-    BASE_URL: 'https://api.federalleague.ru',
-    ENDPOINTS: {
-        PLAYERS: '/players/online',
-        SERVER_STATUS: '/server/status',
-        STATS: '/server/stats'
-    }
-};
+    <script src="js/script.js"></script>
+    <script src="js/news-api.js"></script>
+    <script src="https://kit.fontawesome.com/cbf5ee59c8.js" crossorigin="anonymous"></script>
 
-// Функция для отображения экрана загрузки
-function initLoadingScreen() {
-    const loadingScreen = document.getElementById('loading-screen');
-    const progressFill = document.querySelector('.progress-fill');
-    const loadingPercentage = document.querySelector('.loading-percentage');
-    const loadingMessage = document.querySelector('.loading-message');
-    
-    if (!loadingScreen) return;
-    
-    // Имитация прогресса загрузки
-    const totalSteps = 10;
-    let currentStep = 0;
-    
-    const loadingMessages = [
-        "Загрузка ресурсов...",
-        "Инициализация сервера...",
-        "Загрузка текстур...",
-        "Подготовка карты...",
-        "Оптимизация производительности...",
-        "Загрузка игровых данных...",
-        "Проверка обновлений...",
-        "Подключение к базе данных...",
-        "Инициализация плагинов...",
-        "Завершение загрузки..."
-    ];
-    
-    const simulateProgress = () => {
-        if (currentStep <= totalSteps) {
-            const progress = (currentStep / totalSteps) * 100;
-            progressFill.style.width = `${progress}%`;
-            loadingPercentage.textContent = `${Math.round(progress)}%`;
-            
-            if (currentStep < loadingMessages.length) {
-                loadingMessage.textContent = loadingMessages[currentStep];
-            }
-            
-            currentStep++;
-            setTimeout(simulateProgress, 300 + Math.random() * 300);
-        } else {
-            // Загрузка завершена
-            setTimeout(() => {
-                loadingScreen.classList.add('hidden');
-                
-                // Добавляем анимацию появления контента
-                document.querySelectorAll('section').forEach((section, index) => {
-                    setTimeout(() => {
-                        section.classList.add('fade-in');
-                    }, index * 100);
-                });
-            }, 500);
-        }
+    <script>
+    // Конфигурация
+    const CONFIG = {
+        MAX_NEWS_ON_HOMEPAGE: 3
     };
-    
-    // Запускаем симуляцию загрузки
-    setTimeout(simulateProgress, 1000);
-    
-    // Альтернативный вариант: реальная загрузка ресурсов
-    window.addEventListener('load', () => {
-        // Если реальная загрузка завершилась раньше, чем симуляция
-        setTimeout(() => {
-            progressFill.style.width = '100%';
-            loadingPercentage.textContent = '100%';
-            loadingMessage.textContent = 'Загрузка завершена!';
-            
+
+    // Функция для отображения экрана загрузки
+    function initLoadingScreen() {
+        const loadingScreen = document.getElementById('loading-screen');
+        const progressFill = document.querySelector('.progress-fill');
+        const loadingPercentage = document.querySelector('.loading-percentage');
+        const loadingMessage = document.querySelector('.loading-message');
+        
+        if (!loadingScreen) return;
+        
+        // Имитация прогресса загрузки
+        const totalSteps = 10;
+        let currentStep = 0;
+        
+        const loadingMessages = [
+            "Загрузка ресурсов...",
+            "Инициализация сервера...",
+            "Загрузка текстур...",
+            "Подготовка карты...",
+            "Оптимизация производительности...",
+            "Загрузка игровых данных...",
+            "Проверка обновлений...",
+            "Подключение к базе данных...",
+            "Инициализация плагинов...",
+            "Завершение загрузки..."
+        ];
+        
+        const simulateProgress = () => {
+            if (currentStep <= totalSteps) {
+                const progress = (currentStep / totalSteps) * 100;
+                progressFill.style.width = `${progress}%`;
+                loadingPercentage.textContent = `${Math.round(progress)}%`;
+                
+                if (currentStep < loadingMessages.length) {
+                    loadingMessage.textContent = loadingMessages[currentStep];
+                }
+                
+                currentStep++;
+                setTimeout(simulateProgress, 300 + Math.random() * 300);
+            } else {
+                // Загрузка завершена
+                setTimeout(() => {
+                    loadingScreen.classList.add('hidden');
+                    
+                    // Добавляем анимацию появления контента
+                    document.querySelectorAll('section').forEach((section, index) => {
+                        setTimeout(() => {
+                            section.classList.add('fade-in');
+                        }, index * 100);
+                    });
+                }, 500);
+            }
+        };
+        
+        // Запускаем симуляцию загрузки
+        setTimeout(simulateProgress, 1000);
+        
+        // Альтернативный вариант: реальная загрузка ресурсов
+        window.addEventListener('load', () => {
+            // Если реальная загрузка завершилась раньше, чем симуляция
             setTimeout(() => {
-                loadingScreen.classList.add('hidden');
+                progressFill.style.width = '100%';
+                loadingPercentage.textContent = '100%';
+                loadingMessage.textContent = 'Загрузка завершена!';
                 
-                // Добавляем анимацию появления контента
-                document.querySelectorAll('section').forEach((section, index) => {
-                    setTimeout(() => {
-                        section.classList.add('fade-in');
-                    }, index * 100);
-                });
+                setTimeout(() => {
+                    loadingScreen.classList.add('hidden');
+                    
+                    // Добавляем анимацию появления контента
+                    document.querySelectorAll('section').forEach((section, index) => {
+                        setTimeout(() => {
+                            section.classList.add('fade-in');
+                        }, index * 100);
+                    });
+                }, 500);
             }, 500);
-        }, 500);
-    });
-}
-
-// Функция для загрузки списка игроков онлайн через API
-async function loadOnlinePlayers() {
-    const playersGrid = document.getElementById('online-players-grid');
-    
-    // Показываем индикатор загрузки
-    playersGrid.innerHTML = `
-        <div class="players-loading">
-            <i class="fas fa-spinner"></i>
-            <p>Загрузка списка игроков...</p>
-        </div>
-    `;
-    
-    try {
-        // Запрос к API для получения данных об игрокаи
-        const response = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.PLAYERS}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            // Раскомментируйте если API требует аутентификацию
-                // 'Authorization': 'Bearer YOUR_API_TOKEN'
-            }
         });
-        
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const data = await response.json();
-        
-        // Обновляем статистику
-        document.getElementById('total-players').textContent = data.totalPlayers || '0';
-        document.getElementById('online-now').textContent = data.onlineCount || '0';
-        document.getElementById('max-online').textContent = data.maxOnline || '0';
-        
-        // Очищаем контейнер
-        playersGrid.innerHTML = '';
-        
-        // Добавляем карточки игроков
-        if (data.players && data.players.length > 0) {
-            data.players.forEach(player => {
-                const playerCard = document.createElement('div');
-                playerCard.className = 'player-card';
-                playerCard.innerHTML = `
-                    <div class="player-avatar">
-                        ${player.avatar ? 
-                            `<img src="${player.avatar}" alt="${player.name}" onerror="this.style.display='none'; this.parentNode.innerHTML='<div class=\"avatar-placeholder\"><i class=\"fas fa-user\"></i></div>'">` : 
-                            `<div class="avatar-placeholder"><i class="fas fa-user"></i></div>`
-                        }
-                    </div>
-                    <h3 class="player-name">${player.name}</h3>
-                    <span class="player-rank">${player.rank || 'Игрок'}</span>
-                    <p class="player-playtime">${player.playtime || 'Неизвестно'}</p>
-                `;
-                playersGrid.appendChild(playerCard);
-            });
-        } else {
-            playersGrid.innerHTML = `
-                <div class="no-players">
-                    <i class="fas fa-users-slash"></i>
-                    <p>Сейчас на сервере нет игроков</p>
-                    <p>Будьте первым, кто присоединится!</p>
-                </div>
-            `;
-        }
-    } catch (error) {
-        console.error('Ошибка при загрузке списка игроков:', error);
-        playersGrid.innerHTML = `
-            <div class="error-message">
-                <i class="fas fa-exclamation-triangle"></i>
-                <p>Ошибка загрузки данных</p>
-                <p>Попробуйте обновить страницу позже</p>
-            </div>
-        `;
     }
-}
 
-// Функция для загрузки новостей из JSON файла
-async function loadNews() {
-    const newsContainer = document.getElementById('news-container');
-    if (!newsContainer) return;
-    
-    // Показываем индикатор загрузки
-    newsContainer.innerHTML = `
-        <div class="news-loading">
-            <i class="fas fa-spinner fa-spin"></i>
-            <p>Загрузка новостей...</p>
-        </div>
-    `;
-
-    try {
-        // Пытаемся загрузить новости из JSON файла
-        console.log('Попытка загрузки новостей из news.json...');
-        const response = await fetch('news.json', {
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            cache: 'no-cache'
-        });
-        
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const data = await response.json();
-        console.log('Новости успешно загружены из файла:', data);
-        
-        // Очищаем контейнер
-        newsContainer.innerHTML = '';
-        
-        // Добавляем новости
-        if (data.news && data.news.length > 0) {
-            const publishedNews = data.news.filter(news => news.status === 'published');
-            
-            if (publishedNews.length > 0) {
-                // Сортируем новости по дате (новые сначала)
-                publishedNews.sort((a, b) => new Date(b.date) - new Date(a.date));
-                
-                // Показываем только последние 3 новости на главной
-                publishedNews.slice(0, 3).forEach(item => {
-                    addNewsItem(newsContainer, item);
-                });
-                
-                // Сохраняем все новости в localStorage для быстрого доступа
-                localStorage.setItem('fl_news', JSON.stringify(publishedNews));
-                console.log('Новости сохранены в localStorage');
-            } else {
-                console.log('Нет опубликованных новостей');
-                showNoNewsMessage(newsContainer);
-            }
-        } else {
-            console.log('Нет новостей в файле');
-            showNoNewsMessage(newsContainer);
-        }
-    } catch (error) {
-        console.error('Ошибка при загрузке новостей из файла:', error);
-        
-        // Пытаемся загрузить новости из localStorage
-        try {
-            const localNews = JSON.parse(localStorage.getItem('fl_news') || '[]');
-            console.log('Попытка загрузки из localStorage:', localNews);
-            
-            if (localNews.length > 0) {
-                newsContainer.innerHTML = '';
-                localNews.slice(0, 3).forEach(item => {
-                    addNewsItem(newsContainer, item);
-                });
-                console.log('Новости загружены из localStorage');
-            } else {
-                // Если в localStorage тоже нет новостей, показываем демо-новости
-                console.log('Загрузка демо-новостей');
-                showDemoNews(newsContainer);
-            }
-        } catch (localError) {
-            console.error('Ошибка при загрузке из localStorage:', localError);
-            showDemoNews(newsContainer);
-        }
+    // Функция для загрузки списка игроков онлайн
+    async function loadOnlinePlayers() {
+        // Ваша реализация загрузки игроков
     }
-}
 
-// Функция для показа демо-новостей
-function showDemoNews(container) {
-    console.log('Показ демо-новостей');
-    const demoNews = [
-        {
-            id: 1,
-            title: "Запуск нового сезона!",
-            date: new Date().toISOString(),
-            image: "images/news1.jpg",
-            excerpt: "Мы рады объявить о начале нового сезона на нашем сервере. Много новых возможностей и улучшений ждут вас!",
-            content: `<p>Мы рады объявить о начале нового сезона на нашем сервере Federal League! Этот сезон принесет много новых возможностей и улучшений:</p>
-                     <ul>
-                         <li>Обновленная политическая система</li>
-                         <li>Новые механики войны между государствами</li>
-                         <li>Улучшенная экономическая система</li>
-                         <li>Исправление множества багов и оптимизация производительности</li>
-                     </ul>
-                     <p>Присоединяйтесь к нам и станьте частью истории нашего сервера!</p>`,
-            status: "published"
-        },
-        {
-            id: 2,
-            title: "Конкурс на лучший город",
-            date: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
-            image: "images/news2.jpg",
-            excerpt: "Объявляем конкурс на самый красивый и функциональный город. Ценные призы победителям!",
-            content: `<p>Объявляем конкурс на самый красивый и функциональный город на нашем сервере! Условия участия:</p>
-                     <ul>
-                         <li>Город должен быть основан не позднее чем за неделю до окончания конкурса</li>
-                         <li>Минимальное количество жителей - 5 человек</li>
-                         <li>Город должен иметь уникальный дизайн и инфраструктуру</li>
-                     </ul>
-                     <p>Главный приз: 5000 FL Coins и уникальный титул «Архитектор сезона»!</p>`,
-            status: "published"
-        },
-        {
-            id: 3,
-            title: "Обновление системы сражений",
-            date: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
-            image: "images/news3.jpg",
-            excerpt: "Мы полностью переработали систему войн и сражений между государствами. Теперь битвы стали еще эпичнее!",
-            content: `<p>Мы полностью переработали систему войн и сражений между государствами. Основные изменения:</p>
-                     <ul>
-                         <li>Новая система осад замков и крепостей</li>
-                         <li>Улучшенный баланс между нападающими и защитниками</li>
-                         <li>Добавлены новые виды осадных орудий</li>
-                         <li>Введена система военных рангов и званий</li>
-                     </ul>
-                     <p>Теперь битвы стали еще эпичнее и стратегически интереснее!</p>`,
-            status: "published"
-        }
-    ];
-    
-    container.innerHTML = '';
-    
-    demoNews.forEach(item => {
-        addNewsItem(container, item);
-    });
-    
-    // Сохраняем демо-новости в localStorage
-    localStorage.setItem('fl_news', JSON.stringify(demoNews));
-}
-
-// Функция для показа сообщения об отсутствии новостей
-function showNoNewsMessage(container) {
-    container.innerHTML = `
-        <div class="no-news">
-            <i class="fas fa-newspaper" style="font-size: 3rem; color: #fdbb2d; margin-bottom: 20px;"></i>
-            <p style="color: #fff; font-size: 1.2rem;">Новостей пока нет</p>
-            <p style="color: #ccc;">Следите за обновлениями!</p>
-        </div>
-    `;
-}
-
-// Функция для добавления элемента новости
-function addNewsItem(container, item) {
-    const newsItem = document.createElement('div');
-    newsItem.className = 'news-item';
-    
-    const newsDate = new Date(item.date);
-    const day = newsDate.getDate();
-    const month = newsDate.toLocaleString('ru-RU', { month: 'short' });
-    
-    newsItem.innerHTML = `
-        <div class="news-image">
-            <img src="${item.image || 'images/news-placeholder.jpg'}" alt="${item.title || 'Новость'}" onerror="this.src='images/news-placeholder.jpg'">
-            <div class="news-date-overlay">
-                <span class="news-day">${day}</span>
-                <span class="news-month">${month}</span>
-            </div>
-        </div>
-        <div class="news-content">
-            <h3 class="news-title">${item.title || 'Без названия'}</h3>
-            <p class="news-excerpt">${item.excerpt || 'Описание отсутствует'}</p>
-            <button class="news-read-btn" onclick="openNewsModal(this.parentNode.parentNode)">
-                <i class="fas fa-book-open"></i>
-                Читать далее
-            </button>
-            <div class="news-full-content" style="display: none;">
-                ${item.content || '<p>Содержимое новости недоступно</p>'}
-            </div>
-        </div>
-    `;
-    
-    container.appendChild(newsItem);
-}
-
-// Функция для загрузки всех новостей
-async function loadAllNews() {
-    try {
+    // Функция для загрузки новостей
+    async function loadNews() {
         const newsContainer = document.getElementById('news-container');
         if (!newsContainer) return;
         
-        // Показываем индикатор загрузки
         newsContainer.innerHTML = `
             <div class="news-loading">
                 <i class="fas fa-spinner fa-spin"></i>
-                <p>Загрузка всех новостей...</p>
+                <p>Загрузка новостей...</p>
             </div>
         `;
-        
-        let newsData = [];
-        
-        // Пытаемся загрузить из файла
+
         try {
-            const response = await fetch('news.json');
-            if (response.ok) {
-                const data = await response.json();
-                newsData = data.news || [];
-            } else {
-                throw new Error('File not found');
-            }
-        } catch (error) {
-            // Если файл не доступен, загружаем из localStorage
-            console.log('Загрузка из localStorage...');
-            const localNews = JSON.parse(localStorage.getItem('fl_news') || '[]');
-            newsData = localNews;
-        }
-        
-        // Очищаем контейнер
-        newsContainer.innerHTML = '';
-        
-        // Добавляем все новости
-        if (newsData.length > 0) {
-            const publishedNews = newsData.filter(news => !news.status || news.status === 'published');
+            const response = await newsAPI.getPublishedNews();
             
-            if (publishedNews.length > 0) {
+            // Очищаем контейнер
+            newsContainer.innerHTML = '';
+            
+            // Добавляем новости
+            if (response.data && response.data.length > 0) {
                 // Сортируем новости по дате (новые сначала)
-                publishedNews.sort((a, b) => new Date(b.date) - new Date(a.date));
+                response.data.sort((a, b) => new Date(b.date) - new Date(a.date));
                 
-                publishedNews.forEach(item => {
+                // Показываем только последние новости на главной
+                response.data.slice(0, CONFIG.MAX_NEWS_ON_HOMEPAGE).forEach(item => {
                     addNewsItem(newsContainer, item);
                 });
             } else {
                 showNoNewsMessage(newsContainer);
             }
-        } else {
-            // Если новостей нет, показываем демо-новости
-            showDemoNews(newsContainer);
+        } catch (error) {
+            console.error('Ошибка при загрузке новостей:', error);
+            showNoNewsMessage(newsContainer);
         }
-        
-        // Скрываем кнопку "Смотреть все новости"
-        const viewAllButton = document.querySelector('.view-all-news');
-        if (viewAllButton) {
-            viewAllButton.style.display = 'none';
-        }
-        
-    } catch (error) {
-        console.error('Ошибка при загрузке всех новостей:', error);
-        // Показываем демо-новости при ошибке
-        showDemoNews(document.getElementById('news-container'));
     }
-}
 
-// Функция для открытия модального окна с новостью
-function openNewsModal(newsItem) {
-    const modal = document.getElementById('news-modal');
-    const modalTitle = modal.querySelector('.modal-title');
-    const modalImage = modal.querySelector('.modal-image img');
-    const modalText = modal.querySelector('.modal-text');
-    const modalDate = modal.querySelector('.modal-date');
-    
-    // Получаем данные из новости
-    const title = newsItem.querySelector('.news-title').textContent;
-    const image = newsItem.querySelector('.news-image img').src;
-    const content = newsItem.querySelector('.news-full-content').innerHTML;
-    
-    // Получаем дату из overlay
-    const dateOverlay = newsItem.querySelector('.news-date-overlay');
-    const day = dateOverlay.querySelector('.news-day').textContent;
-    const month = dateOverlay.querySelector('.news-month').textContent;
-    
-    // Заполняем модальное окно
-    modalTitle.textContent = title;
-    modalImage.src = image;
-    modalText.innerHTML = content;
-    modalDate.querySelector('.modal-day').textContent = day;
-    modalDate.querySelector('.modal-month').textContent = month;
-    
-    // Показываем модальное окно
-    modal.style.display = 'block';
-}
+    // Функция для показа сообщения об отсутствии новостей
+    function showNoNewsMessage(container) {
+        container.innerHTML = `
+            <div class="no-news">
+                <i class="fas fa-newspaper"></i>
+                <p>Новостей пока нет</p>
+                <p>Следите за обновлениями!</p>
+            </div>
+        `;
+    }
 
-// Функция для обновления счетчиков в хедере
-async function updateServerCounters() {
-    try {
-        const response = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.SERVER_STATUS}`);
+    // Функция для добавления элемента новости
+    function addNewsItem(container, item) {
+        const newsItem = document.createElement('div');
+        newsItem.className = 'news-item';
         
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
+        const newsDate = new Date(item.date);
+        const day = newsDate.getDate();
+        const month = newsDate.toLocaleString('ru-RU', { month: 'short' });
         
-        const data = await response.json();
+        newsItem.innerHTML = `
+            <div class="news-image">
+                <img src="${item.image || 'images/news-placeholder.jpg'}" alt="${item.title || 'Новость'}" onerror="this.src='images/news-placeholder.jpg'">
+                <div class="news-date-overlay">
+                    <span class="news-day">${day}</span>
+                    <span class="news-month">${month}</span>
+                </div>
+            </div>
+            <div class="news-content">
+                <h3 class="news-title">${item.title || 'Без названия'}</h3>
+                <p class="news-excerpt">${item.excerpt || 'Описание отсутствует'}</p>
+                <button class="news-read-btn" onclick="openNewsModal(this.parentNode.parentNode)">
+                    <i class="fas fa-book-open"></i>
+                    Читать далее
+                </button>
+                <div class="news-full-content" style="display: none;">
+                    ${item.content || '<p>Содержимое новости недоступно</p>'}
+                </div>
+            </div>
+        `;
         
-        if (data.online) {
-            const minecraftOnlineElement = document.querySelector('.minecraft-online-players');
-            const discordOnlineElement = document.querySelector('.discord-online-users');
+        container.appendChild(newsItem);
+    }
+
+    // Функция для открытия модального окна с новостью
+    function openNewsModal(newsItem) {
+        const modal = document.getElementById('news-modal');
+        const modalTitle = modal.querySelector('.modal-title');
+        const modalImage = modal.querySelector('.modal-image img');
+        const modalText = modal.querySelector('.modal-text');
+        const modalDate = modal.querySelector('.modal-date');
+        
+        // Получаем данные из новости
+        const title = newsItem.querySelector('.news-title').textContent;
+        const image = newsItem.querySelector('.news-image img').src;
+        const content = newsItem.querySelector('.news-full-content').innerHTML;
+        
+        // Получаем дату из overlay
+        const dateOverlay = newsItem.querySelector('.news-date-overlay');
+        const day = dateOverlay.querySelector('.news-day').textContent;
+        const month = dateOverlay.querySelector('.news-month').textContent;
+        
+        // Заполняем модальное окно
+        modalTitle.textContent = title;
+        modalImage.src = image;
+        modalText.innerHTML = content;
+        modalDate.querySelector('.modal-day').textContent = day;
+        modalDate.querySelector('.modal-month').textContent = month;
+        
+        // Показываем модальное окно
+        modal.style.display = 'block';
+    }
+
+    // Функция для загрузки всех новостей
+    async function loadAllNews() {
+        const newsContainer = document.getElementById('news-container');
+        if (!newsContainer) return;
+        
+        try {
+            const response = await newsAPI.getPublishedNews();
             
-            if (minecraftOnlineElement) {
-                minecraftOnlineElement.textContent = data.players.online || '0';
+            // Очищаем контейнер
+            newsContainer.innerHTML = '';
+            
+            // Добавляем все новости
+            if (response.data && response.data.length > 0) {
+                response.data.forEach(item => {
+                    addNewsItem(newsContainer, item);
+                });
+            } else {
+                showNoNewsMessage(newsContainer);
             }
             
-            // Если API также возвращает данные Discord
-            if (data.discord && discordOnlineElement) {
-                discordOnlineElement.textContent = data.discord.members || '0';
+            // Скрываем кнопку "Смотреть все новости"
+            const viewAllButton = document.querySelector('.view-all-news');
+            if (viewAllButton) {
+                viewAllButton.style.display = 'none';
             }
+            
+        } catch (error) {
+            console.error('Ошибка при загрузке всех новостей:', error);
+            showNoNewsMessage(newsContainer);
         }
-    } catch (error) {
-        console.error('Ошибка при обновлении счетчиков:', error);
     }
-}
 
-// Функция для получения статистики сервера
-async function loadServerStats() {
-    try {
-        const response = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.STATS}`);
-        
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const data = await response.json();
-        
-        // Обновляем статистику в секции игроков
-        if (data.totalPlayers) {
-            document.getElementById('total-players').textContent = data.totalPlayers;
-        }
-        if (data.maxOnline) {
-            document.getElementById('max-online').textContent = data.maxOnline;
-        }
-    } catch (error) {
-        console.error('Ошибка при загрузке статистики сервера:', error);
+    // Функция для обновления счетчиков в хедере
+    async function updateServerCounters() {
+        // Ваша реализация обновления счетчиков
     }
-}
 
-// Закрытие модального окна
-document.addEventListener('DOMContentLoaded', function() {
-    const modal = document.getElementById('news-modal');
-    const closeBtn = modal.querySelector('.modal-close');
-    const closeBtn2 = modal.querySelector('.modal-close-btn');
-    
-    closeBtn.addEventListener('click', function() {
-        modal.style.display = 'none';
+    // Функция для получения статистики сервера
+    async function loadServerStats() {
+        // Ваша реализация загрузки статистики
+    }
+
+    // Загружаем данные при загрузке страницы
+    document.addEventListener('DOMContentLoaded', function() {
+        initLoadingScreen();
+        
+        // Загружаем контент после небольшой задержки
+        setTimeout(() => {
+            loadOnlinePlayers();
+            loadNews();
+            updateServerCounters();
+            loadServerStats();
+        }, 1500);
+        
+        // Обновляем список каждые 2 минуты
+        setInterval(loadOnlinePlayers, 120000);
+        
+        // Обновляем счетчики каждую минуту
+        setInterval(updateServerCounters, 60000);
     });
-    
-    closeBtn2.addEventListener('click', function() {
-        modal.style.display = 'none';
-    });
-    
-    window.addEventListener('click', function(event) {
-        if (event.target === modal) {
+
+    // Закрытие модального окна
+    document.addEventListener('DOMContentLoaded', function() {
+        const modal = document.getElementById('news-modal');
+        const closeBtn = modal.querySelector('.modal-close');
+        const closeBtn2 = modal.querySelector('.modal-close-btn');
+        
+        closeBtn.addEventListener('click', function() {
             modal.style.display = 'none';
-        }
+        });
+        
+        closeBtn2.addEventListener('click', function() {
+            modal.style.display = 'none';
+        });
+        
+        window.addEventListener('click', function(event) {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
     });
-});
 
-// Загружаем данные при загрузке страницы
-document.addEventListener('DOMContentLoaded', function() {
-    initLoadingScreen();
-    
-    // Загружаем контент после небольшой задержки для демонстрации экрана загрузки
-    setTimeout(() => {
-        loadOnlinePlayers();
-        loadNews();
-        updateServerCounters();
-        loadServerStats();
-    }, 1500);
-    
-    // Обновляем список каждые 2 минуты
-    setInterval(loadOnlinePlayers, 120000);
-    
-    // Обновляем счетчики каждую минуту
-    setInterval(updateServerCounters, 60000);
-});
-
-// Функция для обработки ошибок изображений (резервная)
-function handleImageError(img) {
-    img.style.display = 'none';
-    img.parentNode.innerHTML = '<div class="avatar-placeholder"><i class="fas fa-user"></i></div>';
-}
-</script>
+    // Функция для обработки ошибок изображений
+    function handleImageError(img) {
+        img.style.display = 'none';
+        img.parentNode.innerHTML = '<div class="avatar-placeholder"><i class="fas fa-user"></i></div>';
+    }
+    </script>
+</body>
 </html>
